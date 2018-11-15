@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { diffRequiredProps } from './shared'
 import type { ComponentType } from 'react'
 import type {
   DocumentReference,
@@ -21,13 +22,26 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
   }withFirestoreSubscription`
 
   initRefListener = ({ firestoreRef, onSnapshot }: FirestoreSubProps) => {
-    if (!firestoreRef) return;
+    try {
+      if (!firestoreRef) return;
 
-    if (this.refListener) this.refListener()
-    this.refListener = firestoreRef.onSnapshot(onSnapshot)
+      if (this.refListener) this.refListener()
+      this.refListener = firestoreRef.onSnapshot(onSnapshot)
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Firestore Subscription error: ', error)
+      }
+    }
   }
 
   componentDidMount() {
+    if (process.env.NODE_ENV === 'development') {
+      diffRequiredProps(
+        'withFirestoreSubscription',
+        this.props,
+        ['onSnapshot', 'function'],
+      )
+    }
     const { firestoreRef, onSnapshot } = this.props
     this.initRefListener({ firestoreRef, onSnapshot })
   }

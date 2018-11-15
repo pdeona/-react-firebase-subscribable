@@ -1,8 +1,10 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { diffRequiredProps } from './shared'
 import type { ComponentType } from 'react'
 import type { FirebaseUser } from 'firebase/app'
 import type { Auth } from 'firebase/auth'
+
 
 export type AuthSubscriberProps = {
   +firebaseAuth: Auth,
@@ -17,8 +19,23 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
   }withFirebaseAuthSubscription`
 
   componentDidMount() {
-    const { firebaseAuth, onAuthStateChanged } = this.props
-    this.authListener = firebaseAuth.onAuthStateChanged(onAuthStateChanged)
+    if (process.env.NODE_ENV === 'development') {
+      diffRequiredProps(
+        'withAuthSubscription',
+        this.props,
+        ['firebaseAuth', 'object', 'firebase app instance'],
+        ['onAuthStateChanged', 'function'],
+      )
+    }
+    try {
+      const { firebaseAuth, onAuthStateChanged } = this.props
+  
+      this.authListener = firebaseAuth.onAuthStateChanged(onAuthStateChanged)
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Auth Subscription error: ', error)
+      }
+    }
   }
 
   componentWillUnmount() {
