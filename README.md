@@ -19,7 +19,7 @@ To enable support in your app, you need to add `@babel/plugin-proposal-decorator
 ```json
 {
   "plugins": [
-    ["@babel/plugin-proposal/decorators", { "legacy": true }]
+    ["@babel/plugin-proposal-decorators", { "legacy": true }]
   ]
 }
 ```
