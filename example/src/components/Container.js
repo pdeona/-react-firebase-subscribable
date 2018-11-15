@@ -12,11 +12,6 @@ import type { UserDatabaseRecord } from '../models/user'
 
 export type OnChangeHandler = (e: SyntheticEvent<HTMLInputElement>) => void
 
-console.log(
-  withAuthSubscription,
-  withFirestoreSubscription,
-);
-
 type ContainerProps = {
   user: ?User,
   userProfile: ?UserDatabaseRecord,
