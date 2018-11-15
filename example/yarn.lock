@@ -8095,6 +8095,11 @@ react-error-overlay@^5.1.0:
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-5.1.0.tgz#c516995a5652e7bfbed8b497910d5280df74a7e8"
   integrity sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
 
+react-firebase-subscribable@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/react-firebase-subscribable/-/react-firebase-subscribable-0.1.2.tgz#0dd0b7f8255a4e696843093c47d3335afa714e3c"
+  integrity sha512-w4G8hXkbJPCIf4EXIrshNnWu6O7Wh9eeoUmY5wh21eV/Y4Uhp0sd4wEXHVI75wW4f+ACi2uuAgiEdu9sMBs6gQ==
+
 react-scripts@2.1.1:
   version "2.1.1"
   resolved "https://registry.npmjs.org/react-scripts/-/react-scripts-2.1.1.tgz#c2959a756b0b61d3090adece0d7aedd324dff8a5"

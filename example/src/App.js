@@ -47,7 +47,7 @@ class App extends PureComponent<*, AppState> {
     const data = p.data()
     const newProfileState = state => ({
       userProfile: p.exists ? data : null,
-      color: p.exists ? data.color : state.color,
+      color: p.exists ? data.favoriteColor : state.color,
       name: p.exists ? data.name : state.name,
     })
     this.setState(newProfileState)
@@ -66,6 +66,8 @@ class App extends PureComponent<*, AppState> {
       user,
       userProfile,
       userProfileRef,
+      name,
+      color,
     } = this.state
 
     return (
@@ -78,6 +80,10 @@ class App extends PureComponent<*, AppState> {
           firestoreRef={userProfileRef}
           onSnapshot={this.onUpdateProfile}
           firebaseAuth={firebase.auth()}
+          form={{
+            name,
+            color,
+          }}
           onChangeUserColor={this.onChangeColor}
           onChangeUserName={this.onChangeName}
         />
