@@ -9,6 +9,7 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 ### `withAuthSubscription`
 
+Props:
 
 | Name               | Type                   | Required |
 | ------------------ |:----------------------:| --------:|
@@ -60,8 +61,9 @@ To use dynamic subscriptions simply pass in null when the desired value isn't av
 `firestoreRef={currentUser ? firestore.collections('user-profiles').doc(currentUser.id) : null}`
 
 Props:
+
 | Name               | Type                   | Required                                     |
-| ------------------ |:----------------------:| --------------------------------------------:|
+| ------------------ |:----------------------:| -------------------------------------------: |
 | firestoreRef       | Firestore Reference    | false (if null, no listener is attached)     |
 | onAuthStateChanged | function               | true                                         |
 
@@ -85,11 +87,11 @@ import NameInDB from './NameInDB'
 
 export default class App extends PureComponent {
   state = {
-    name: null,
+    name: '',
   }
   
   onSnapshot = user => this.setState(doc => ({
-    name: doc.data(),
+    name: doc.data() || '',
   }))
 
   render() {
