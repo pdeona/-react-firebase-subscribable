@@ -7,7 +7,20 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 ## Usage:
 
-### `withAuthSubscription`
+### As Decorators
+
+Both `withAuthSubscription` and `withFirestoreSubscription` work with the ES7 decorator proposal syntax for class decorators:
+```js
+@withAuthSubscription
+@withFirestoreSubscription
+```
+
+To enable support in your app, you need to add `@babel/plugin-proposal-decorators` to your project and add the following to your `.babelrc`:
+```json
+["@babel/plugin-proposal/decorators", { "legacy": true }]
+```
+
+### withAuthSubscription
 
 Props:
 
@@ -21,6 +34,26 @@ Props:
 import React from 'react'
 import { withAuthSubscription } from 'react-firebase-subscribable'
 
+/**
+ *  as a decorator
+ **/
+@withAuthSubscription
+class CurrentUser extends Component {
+  render() {
+    const { user } = this.props
+    return (
+      <div>
+        {user ? JSON.stringify(user) : 'Not signed in'}
+      </div>
+    )
+  }
+}
+
+export default CurrentUser
+
+/**
+ *  as a function
+ **/
 const CurrentUser = ({ user }) => (
   <div>
     {user ? JSON.stringify(user) : 'Not signed in'}
@@ -70,9 +103,28 @@ Props:
 | onAuthStateChanged | function               | true                                         |
 
 ```js
-import React from 'react'
+import React, { Component } from 'react'
 import { withFirestoreSubscription } from 'react-firebase-subscribable'
 
+/**
+ *  as a decorator
+ **/
+@withFirestoreSubscription
+class NameInDB extends Component {
+  render() {
+    return (
+      <div>
+        {this.props.name}
+      </div>
+    )
+  }
+}
+
+export default NameInDB
+
+/**
+ *  as a function
+ **/
 const NameInDB = ({ name }) => (
   <div>
     {name}
