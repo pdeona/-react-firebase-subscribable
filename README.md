@@ -17,8 +17,14 @@ Both `withAuthSubscription` and `withFirestoreSubscription` work with the ES7 de
 
 To enable support in your app, you need to add `@babel/plugin-proposal-decorators` to your project and add the following to your `.babelrc`:
 ```json
-["@babel/plugin-proposal/decorators", { "legacy": true }]
+{
+  "plugins": [
+    ["@babel/plugin-proposal/decorators", { "legacy": true }]
+  ]
+}
 ```
+
+See the example in <https://github.com/pdeona/-react-firebase-subscribable/tree/decorator-example/example>
 
 ### withAuthSubscription
 
@@ -136,7 +142,7 @@ export default withFirestoreSubscription(NameInDB)
 
 ```js
 import React, { PureComponent } from 'react'
-import firebase from 'firebase' // firebase auth passed in as prop
+import firebase from 'firebase' // firestore ref passed in as prop
 import NameInDB from './NameInDB'
 
 export default class App extends PureComponent {
