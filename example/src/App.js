@@ -9,7 +9,7 @@ import User from './models/user'
 import type { UserDatabaseRecord } from './models/user'
 
 type AppState = {
-  user: ?User,
+  user: ?FirebaseUser,
   userProfile: ?UserDatabaseRecord,
   userProfileRef: ?DocumentReference,
   color: string,

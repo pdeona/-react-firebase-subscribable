@@ -4,13 +4,13 @@ import { diffRequiredProps } from './shared'
 import type { ComponentType } from 'react'
 import type {
   DocumentReference,
-  QueryReference,
+  CollectionReference,
   DocumentSnapshot,
   QuerySnapshot,
 } from 'firebase/firestore'
 
 export type FirestoreSubProps = {
-  +firestoreRef: (?DocumentReference | ?QueryReference),
+  +firestoreRef: (?DocumentReference | ?CollectionReference),
   +onSnapshot: (?DocumentSnapshot | ?QuerySnapshot) => void,
 }
 

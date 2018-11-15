@@ -92,7 +92,7 @@ export default class App extends PureComponent {
     name: '',
   }
   
-  onSnapshot = user => this.setState(doc => ({
+  onSnapshot = doc => this.setState(() => ({
     name: doc.data() || '',
   }))
 

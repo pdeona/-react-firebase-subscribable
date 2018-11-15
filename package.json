@@ -1,8 +1,8 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "main": "dist/index.js",
-  "author": "Pedro De Ona <pdeon003@fiu.edu>",
+  "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
   "repository": "github:pdeona/-react-firebase-subscribable",
   "description": "Higher Order Components to wrap a component in a firebase subscription",
@@ -28,6 +28,7 @@
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "cpx": "^1.5.0",
+    "flow-bin": "^0.86.0",
     "rimraf": "^2.6.2"
   },
   "peerDependencies": {
