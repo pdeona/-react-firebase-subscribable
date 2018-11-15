@@ -55,6 +55,10 @@ export default class App extends PureComponent {
 
 ### withFirestoreSubscription
 
+withFirestoreSubscription will cleanup/re-initialize snapshot listeners any time firestoreRef changes.
+To use dynamic subscriptions simply pass in null when the desired value isn't available:
+`firestoreRef={currentUser ? firestore.collections('user-profiles').doc(currentUser.id) : null}`
+
 Props:
 | Name               | Type                   | Required                                     |
 | ------------------ |:----------------------:| --------------------------------------------:|
@@ -97,6 +101,8 @@ export default class App extends PureComponent {
   }
 }
 ```
+
+See example for a more complete sample app.
 
 ## Bugs, Pull Requests
 
