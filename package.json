@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/index.js",
   "author": "Pedro De Ona <pdeon003@fiu.edu>",
   "license": "MIT",
@@ -16,7 +16,8 @@
     "copy-flowtypes": "",
     "prebuild": "rimraf dist",
     "build": "babel src --out-dir dist",
-    "postbuild": "./lib/copy-flowtypes"
+    "postbuild": "./lib/copy-flowtypes",
+    "deploy": "yarn build && yarn publish"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
