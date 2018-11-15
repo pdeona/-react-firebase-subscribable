@@ -45,11 +45,13 @@ export default class App extends PureComponent {
   }))
 
   render() {
-    <CurrentUser
-      user={this.state.user}
-      onAuthStateChanged={this.onAuthStateChanged}
-      firebaseAuth={firebase.auth(YOUR_APP_CONFIG)}
-    />
+    return (
+      <CurrentUser
+        user={this.state.user}
+        onAuthStateChanged={this.onAuthStateChanged}
+        firebaseAuth={firebase.auth(YOUR_APP_CONFIG)}
+      />
+    )
   }
 }
 ```
@@ -95,11 +97,13 @@ export default class App extends PureComponent {
   }))
 
   render() {
-    <NameInDB
-      name={this.state.name}
-      firestoreRef={firebase.firestore(APP_CONFIG).collection('name').doc('mine')}
-      onSnapshot={this.onSnapshot}
-    />
+    return (
+      <NameInDB
+        name={this.state.name}
+        firestoreRef={firebase.firestore(APP_CONFIG).collection('name').doc('mine')}
+        onSnapshot={this.onSnapshot}
+      />
+    )
   }
 }
 ```
