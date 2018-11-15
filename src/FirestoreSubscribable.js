@@ -23,9 +23,9 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
 
   initRefListener = ({ firestoreRef, onSnapshot }: FirestoreSubProps) => {
     try {
+      if (this.refListener) this.refListener()
       if (!firestoreRef) return;
 
-      if (this.refListener) this.refListener()
       this.refListener = firestoreRef.onSnapshot(onSnapshot)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {

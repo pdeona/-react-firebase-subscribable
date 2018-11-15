@@ -2,7 +2,8 @@
 
 Higher order components to wrap React Components in Firebase Auth/Firestore real-time subscriptions.
 
-## Dependencies: 
+## Dependencies:
+
   - No dependencies, peer dependency on React.
 
 ## Usage:
@@ -16,6 +17,7 @@ Both `withAuthSubscription` and `withFirestoreSubscription` work with the ES7 de
 ```
 
 To enable support in your app, you need to add `@babel/plugin-proposal-decorators` to your project and add the following to your `.babelrc`:
+
 ```json
 {
   "plugins": [
