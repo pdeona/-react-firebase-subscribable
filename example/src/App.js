@@ -1,22 +1,10 @@
-// @flow
 import React, { PureComponent } from 'react'
-import type { FirebaseUser } from 'firebase/app'
-import type { DocumentSnapshot, DocumentReference } from 'firebase/firestore'
 import firebase from './firebase'
 import Container from './components/Container'
-import type { OnChangeHandler } from './components/Container'
 import User from './models/user'
-import type { UserDatabaseRecord } from './models/user'
+import './App.css'
 
-type AppState = {
-  user: ?FirebaseUser,
-  userProfile: ?UserDatabaseRecord,
-  userProfileRef: ?DocumentReference,
-  color: string,
-  name: string,
-}
-
-class App extends PureComponent<*, AppState> {
+class App extends PureComponent {
   state = {
     user: null,
     userProfile: null,
@@ -25,14 +13,14 @@ class App extends PureComponent<*, AppState> {
     name: '',
   }
 
-  authStateChanged = (user: ?FirebaseUser) => this.setState(state => ({
+  authStateChanged = user => this.setState(state => ({
     user,
     userProfile: user ? state.userProfile : null,
     userProfileRef: user ? User.userProfile(user.uid) : null,
   }))
 
-  updateProfile = (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  updateProfile = event => {
+    event.preventDefault()
     const { user, color, name } = this.state
 
     const data = {
@@ -43,7 +31,7 @@ class App extends PureComponent<*, AppState> {
     User.userProfile(user.uid).set(data, { merge: true })
   }
 
-  onUpdateProfile = (p: DocumentSnapshot) => {
+  onUpdateProfile = p => {
     const data = p.data()
     const newProfileState = state => ({
       userProfile: p.exists ? data : null,
@@ -53,11 +41,11 @@ class App extends PureComponent<*, AppState> {
     this.setState(newProfileState)
   }
 
-  onChangeColor: OnChangeHandler = ({ target: { value: color } }) => this.setState(() => ({
+  onChangeColor = ({ target: { value: color } }) => this.setState(() => ({
     color,
   }))
 
-  onChangeName: OnChangeHandler = ({ target: { value: name } }) => this.setState(() => ({
+  onChangeName = ({ target: { value: name } }) => this.setState(() => ({
     name,
   }))
 

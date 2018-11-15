@@ -25,7 +25,6 @@
   ],
   "devDependencies": {
     "firebase": "^5.5.8",
-    "flow-bin": "^0.86.0",
     "lodash": "^4.17.11"
   }
 }

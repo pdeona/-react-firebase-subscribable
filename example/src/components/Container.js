@@ -1,30 +1,10 @@
-// @flow
 import React from 'react'
-import type { StatelessFunctionalComponent } from 'react'
 import compose from 'lodash/fp/compose'
 import {
   withAuthSubscription,
   withFirestoreSubscription,
 } from 'react-firebase-subscribable'
-import type { AuthSubscriberProps, FirestoreSubProps } from 'react-firebase-subscribable'
 import User from '../models/user'
-import type { UserDatabaseRecord } from '../models/user'
-
-export type OnChangeHandler = (e: SyntheticEvent<HTMLInputElement>) => void
-
-type ContainerProps = {
-  user: ?User,
-  userProfile: ?UserDatabaseRecord,
-  onChangeUserColor: OnChangeHandler,
-  onChangeUserName: OnChangeHandler,
-  updateProfile: (e: SyntheticEvent<HTMLFormElement>) => void,
-  form: {
-    name: string,
-    color: string,
-  },
-  ...AuthSubscriberProps,
-  ...FirestoreSubProps,
-}
 
 function Container({
   user,
@@ -33,7 +13,7 @@ function Container({
   onChangeUserColor,
   onChangeUserName,
   form,
-}): StatelessFunctionalComponent<ContainerProps> {
+}) {
   return (
     <div>
       <button onClick={user ? User.signOut : User.signInAnonymously}>
