@@ -1,0 +1,64 @@
+// @flow
+import React from 'react'
+import type { StatelessFunctionalComponent } from 'react'
+import compose from 'lodash/fp/compose'
+import { withAuthSub, withFirestoreSub } from 'react-firebase-subscribable'
+import type { AuthSubscriberProps, FirestoreSubProps } from 'react-firebase-subscribable'
+import User from '../models/user'
+import type { UserDatabaseRecord } from '../models/user'
+
+export type OnChangeHandler = (e: SyntheticEvent<HTMLInputElement>) => void
+
+type ContainerProps = {
+  user: ?User,
+  userProfile: ?UserDatabaseRecord,
+  onChangeUserColor: OnChangeHandler,
+  onChangeUserName: OnChangeHandler,
+  updateProfile: (e: SyntheticEvent<HTMLFormElement>) => void,
+  ...AuthSubscriberProps,
+  ...FirestoreSubProps,
+}
+
+function Container({
+  user,
+  userProfile,
+  updateProfile,
+  onChangeUserColor,
+  onChangeUserName,
+}): StatelessFunctionalComponent<ContainerProps> {
+  return (
+    <div>
+      <button onClick={user ? User.signOut : User.signInAnonymously}>
+        Sign {user ? 'Out' : 'In'}
+      </button>
+      <div className="profile-info">
+        {userProfile ?
+          `${userProfile.name}'s favorite color is ${userProfile.favoriteColor}` :
+          'Sign in to view profile'
+        }
+      </div>
+      {
+        user &&
+          <form onSubmit={updateProfile}>
+            <label htmlFor="user-name">Name:</label>
+            <input 
+              name="name"
+              id="user-name"
+              value={userProfile ? userProfile.name : ''}
+              onChange={onChangeUserName}
+            />
+            <label htmlFor="user-color">Fav. Color:</label>
+            <input 
+              name="color" 
+              id="user-color" 
+              value={userProfile ? userProfile.favoriteColor : ''}
+              onChange={onChangeUserColor}
+            />
+            <button type="submit">Update</button>
+          </form>
+      }
+    </div>
+  )
+}
+
+export default compose(withFirestoreSub, withAuthSub)(Container)
