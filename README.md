@@ -2,7 +2,20 @@
 
 Higher order components to wrap React Components in Firebase Auth/Firestore real-time subscriptions.
 
-## Dependencies
+## Table of Contents
+
+[Usage](#usage)
+
+- [As Decorators](#as-decorators)
+- [withAuthSubscription](#withauthsubscription)
+- [withFirestoreSubscription](#withfirestoresubcription)
+- [withRTDBSubscription](#withrtdbsubscription)
+
+[Examples](#examples)
+
+[Bugs, Pull Requests](#bugs-pull-requests)
+
+### Dependencies
 
 - No dependencies, peer dependency on React.
 
