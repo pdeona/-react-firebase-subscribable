@@ -28,7 +28,7 @@ To enable support in your app, you need to add `@babel/plugin-proposal-decorator
 }
 ```
 
-See the example in <https://github.com/pdeona/-react-firebase-subscribable/tree/decorator-example/example>
+See the example in <https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators>
 
 ### withAuthSubscription
 
@@ -262,7 +262,11 @@ export default class App extends PureComponent {
 }
 ```
 
-See example for a more complete sample app.
+### Examples
+
+[vanilla React](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example)
+[with Recompose](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
+[as Decorators](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
 
 ## Bugs, Pull Requests
 
