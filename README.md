@@ -184,9 +184,9 @@ Props:
 | ------------------ |:----------------------:| -----------------------------------------: |
 | firebaseRef        | Firebase DB Reference  | false (if null, no listener is attached)   |
 | onSnapshot         | function               | true                                       |
-| eventType          | enum                   | see EventTypes                             |
+| eventType          | enum                   | false; default = 'value'; see [EventTypes](#event-types)   |
 
-Event Types:
+#### Event Types
 
 - "value"
 - "child_added"

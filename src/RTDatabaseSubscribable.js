@@ -31,7 +31,7 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
     WrappedComponent.displayName || WrappedComponent.name
   }withRTDBSubscription`
 
-  initRefListener = ({ firebaseRef, onSnapshot, eventType }: RTDatabaseSubscriberProps) => {
+  initRefListener = ({ firebaseRef, onSnapshot, eventType = 'value' }: RTDatabaseSubscriberProps) => {
     try {
       if (!firebaseRef) return;
 
@@ -52,13 +52,6 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
           propName: 'onSnapshot',
           propType: 'function',
         },
-        {
-          propName: 'eventType',
-          predicate: prop => eventTypes.includes(prop),
-          message: `eventType is required and should be one of: ${
-            eventTypes.join(', ')
-          }`,
-        }
       )
     }
     const { firebaseRef, onSnapshot, eventType } = this.props
