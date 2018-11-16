@@ -16,18 +16,16 @@ function Container({
 }) {
   return (
     <div>
-      <button onClick={user ? User.signOut : User.signInAnonymously}>
-        Sign {user ? 'Out' : 'In'}
-      </button>
       <div className="profile-info">
-        {userProfile ?
-          `${userProfile.name}'s favorite color is ${userProfile.favoriteColor}` :
-          'Sign in to view profile'
+        {user ?
+          userProfile ?
+            `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unkown at this time'}` : 'We dont have your profile yet!' :
+            'Sign in to view profile'
         }
       </div>
       {
         user &&
-          <form onSubmit={updateProfile}>
+          <form>
             <label htmlFor="user-name">Name:</label>
             <input 
               name="name"
@@ -42,9 +40,11 @@ function Container({
               value={form.color}
               onChange={onChangeUserColor}
             />
-            <button type="submit">Update</button>
           </form>
       }
+      <button onClick={user ? User.signOut : User.signInAnonymously}>
+        Sign {user ? 'Out' : 'In'}
+      </button>
     </div>
   )
 }
