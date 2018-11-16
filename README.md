@@ -108,7 +108,7 @@ Props:
 | Name               | Type                   | Required                                     |
 | ------------------ |:----------------------:| -------------------------------------------: |
 | firestoreRef       | Firestore Reference    | false (if null, no listener is attached)     |
-| onAuthStateChanged | function               | true                                         |
+| onSnapshot         | function               | true                                         |
 
 ```js
 import React, { Component } from 'react'
