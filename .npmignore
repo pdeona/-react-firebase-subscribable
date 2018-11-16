@@ -5,3 +5,5 @@ tests/
 flow-typed/
 lib/
 .flowconfig
+yarn.lock
+package-lock.json

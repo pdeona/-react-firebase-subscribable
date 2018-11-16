@@ -7,13 +7,16 @@ import type {
   Reference,
 } from 'firebase/database'
 
+// No way to make flow enum from Array, unfortunately
+const eventTypes = [
+  'value', 'child_added', 'child_removed', 'child_moved', 'child_changed',
+]
+
 type RTDBEventType = 'value' 
   | 'child_added'
   | 'child_changed'
   | 'child_removed'
   | 'child_moved'
-
-const eventTypes = ['value', 'child_added', 'child_removed', 'child_moved', 'child_changed']
 
 type RTDatabaseSubscriberProps = {
   firebaseRef: Reference,

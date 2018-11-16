@@ -237,7 +237,7 @@ export default withRTDBSubscription(NameInDB)
 
 ```js
 import React, { PureComponent } from 'react'
-import firebase from 'firebase' // firestore ref passed in as prop
+import firebase from 'firebase' // firebase db ref passed in as prop
 import NameInDB from './NameInDB'
 
 export default class App extends PureComponent {
