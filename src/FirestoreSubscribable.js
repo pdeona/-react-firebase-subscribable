@@ -39,7 +39,10 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
       diffRequiredProps(
         'withFirestoreSubscription',
         this.props,
-        ['onSnapshot', 'function'],
+        {
+          propName: 'onSnapshot',
+          propType: 'function',
+        },
       )
     }
     const { firestoreRef, onSnapshot } = this.props
