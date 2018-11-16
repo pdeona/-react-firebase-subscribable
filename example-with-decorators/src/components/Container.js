@@ -21,7 +21,7 @@ class Container extends PureComponent {
         <div className="profile-info">
           {user ?
             userProfile ?
-              `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unkown at this time'}` : 'We dont have your profile yet!' :
+              `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!' :
               'Sign in to view profile'
           }
         </div>
