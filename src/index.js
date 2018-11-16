@@ -1,4 +1,6 @@
 export { default as withAuthSubscription } from './AuthSubscribable'
 export { default as withFirestoreSubscription } from './FirestoreSubscribable'
+export { default as withRTDBSubscription } from './RTDatabaseSubscribable'
 export type { AuthSubscriberProps } from './AuthSubscribable'
 export type { FirestoreSubProps } from './FirestoreSubscribable'
+export type { RTDatabaseSubscriberProps } from './RTDatabaseSubscribable'

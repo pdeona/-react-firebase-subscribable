@@ -18,7 +18,7 @@ const eventTypes = ['value', 'child_added', 'child_removed', 'child_moved', 'chi
 type RTDatabaseSubscriberProps = {
   firebaseRef: Reference,
   eventType: RTDBEventType,
-  onChange: (d: DataSnapshot) => void,
+  onSnapshot: (d: DataSnapshot) => void,
 }
 
 export default (WrappedComponent: ComponentType<*>) => class extends PureComponent<RTDatabaseSubscriberProps> {
@@ -28,11 +28,11 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
     WrappedComponent.displayName || WrappedComponent.name
   }withRTDBSubscription`
 
-  initRefListener = ({ firebaseRef, onChange, eventType }: RTDatabaseSubscriberProps) => {
+  initRefListener = ({ firebaseRef, onSnapshot, eventType }: RTDatabaseSubscriberProps) => {
     try {
       if (!firebaseRef) return;
 
-      firebaseRef.on(eventType, onChange)
+      firebaseRef.on(eventType, onSnapshot)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Firebase RTDB Subscription error: ', error)
@@ -46,7 +46,7 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
         'withRTDBSubscription',
         this.props,
         {
-          propName: 'onChange',
+          propName: 'onSnapshot',
           propType: 'function',
         },
         {
@@ -58,21 +58,21 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
         }
       )
     }
-    const { firebaseRef, onChange, eventType } = this.props
-    this.initRefListener({ firebaseRef, onChange, eventType })
+    const { firebaseRef, onSnapshot, eventType } = this.props
+    this.initRefListener({ firebaseRef, onSnapshot, eventType })
   }
 
   componentDidUpdate(prevProps: RTDatabaseSubscriberProps): void {
-    const { firebaseRef, onChange, eventType } = this.props
+    const { firebaseRef, onSnapshot, eventType } = this.props
     if (prevProps.firebaseRef !== firebaseRef) {
-      if (prevProps.firebaseRef) prevProps.firebaseRef.off(eventType, onChange)
-      this.initRefListener({ firebaseRef, onChange, eventType })
+      if (prevProps.firebaseRef) prevProps.firebaseRef.off(eventType, onSnapshot)
+      this.initRefListener({ firebaseRef, onSnapshot, eventType })
     }
   }
 
   componentWillUnmount(): void {
-    const { firebaseRef, onChange, eventType } = this.props
-    if (firebaseRef) firebaseRef.off(eventType, onChange)
+    const { firebaseRef, onSnapshot, eventType } = this.props
+    if (firebaseRef) firebaseRef.off(eventType, onSnapshot)
   }
 
   render() {
