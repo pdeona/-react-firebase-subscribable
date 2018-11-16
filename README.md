@@ -265,7 +265,9 @@ export default class App extends PureComponent {
 ### Examples
 
 [vanilla React](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example)
-[with Recompose](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
+
+[with Recompose](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-recompose)
+
 [as Decorators](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
 
 ## Bugs, Pull Requests
