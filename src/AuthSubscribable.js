@@ -23,8 +23,15 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
       diffRequiredProps(
         'withAuthSubscription',
         this.props,
-        ['firebaseAuth', 'object', 'firebase app instance'],
-        ['onAuthStateChanged', 'function'],
+        {
+          propName: 'firebaseAuth',
+          predicate: prop => typeof prop.onAuthStateChanged === 'function',
+          message: 'firebaseAuth is required and should be a firebase app auth instance.',
+        },
+        {
+          propName: 'onAuthStateChanged',
+          propType: 'function'
+        },
       )
     }
     try {

@@ -1,15 +1,31 @@
-const requiredPropErrorMsg = (componentName, propName, propType) => `${componentName} did not receive ${propName} as a prop. ${propName} should be provided as a ${propType}`
+const requiredPropErrorMsg = (componentName, propName, message) => `${componentName} did not receive ${propName} as a prop. ${message}`
 
 class RequiredPropError extends Error {
-  constructor(componentName, propName, propType) {
-    super(requiredPropErrorMsg(componentName, propName, propType))
+  constructor(componentName, propName, message) {
+    super(requiredPropErrorMsg(componentName, propName, message))
   }
 }
 
 export const diffRequiredProps = (componentName, props, ...requiredProps) => {
-  const errors = requiredProps.map(([propName, propType, custType = '']) => {
-    if (!props[propName] || typeof props[propName] !== propType) {
-      return [componentName, propName, custType || propType]
+  const errors = requiredProps.map(({
+    propName,
+    propType,
+    predicate,
+    message = '',
+  }) => {
+    if (predicate && !predicate(props[propName])) {
+      return [
+        componentName,
+        propName,
+        message || `${propName} is required`,
+      ]
+    }
+    if (typeof props[propName] !== propType) {
+      return [
+        componentName,
+        propName,
+        `${propName} is required and should be a ${propType}`,
+      ]
     }
     return null
   }).filter(e => !!e)
