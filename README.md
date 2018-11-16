@@ -172,8 +172,8 @@ export default class App extends PureComponent {
 ### withRTDBSubscription
 
 withRTDBSubscription will cleanup/re-initialize snapshot listeners any time firebaseRef changes.
-This component also required an eventType to be provided, as the legacy real-time database requires the event name as 
-a parameter to initialize listeners.
+This component also allows an eventType to be provided, for listeners on lists. The default
+value for `eventType` is `"value"`.
 
 To use dynamic references simply pass in null when the desired value isn't available:
 `firebaseRef={currentUser ? firebase.ref('user-profiles').child(currentUser.id) : null}`
