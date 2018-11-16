@@ -1,3 +1,7 @@
 example/
 src/
 yarn-error.log
+tests/
+flow-typed/
+lib/
+.flowconfig
