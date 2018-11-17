@@ -4,6 +4,8 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 ## Table of Contents
 
+[Dependencies](#dependencies)
+
 [Usage](#usage)
 
 - [As Decorators](#as-decorators)
@@ -15,9 +17,9 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 [Bugs, Pull Requests](#bugs-pull-requests)
 
-### Dependencies
+## Dependencies
 
-- No dependencies, peer dependency on React.
+- React ^16.0.0
 
 ## Usage
 
