@@ -8,7 +8,7 @@ class RequiredPropError extends Error {
   }
 }
 
-type TypeofTypes = 'string' 
+type TypeofTypes = 'string'
   | 'function'
   | 'number'
   | 'object'
@@ -52,5 +52,5 @@ export const diffRequiredProps = (
   return errors
     .filter(e => !!e)
   // $FlowFixMe filtered arrays aren't properly type-checked
-    .map(err => new RequiredPropError(...err))
+    .map(err => console.error(new RequiredPropError(...err)))
 }
