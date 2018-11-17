@@ -2,7 +2,7 @@ import React from 'react'
 import {
   withAuthSubscription,
   withFirestoreSubscription,
-} from 'react-firebase-subscribable'
+} from '../dist'
 import {
   withState,
   withPropsOnChange,
@@ -59,7 +59,6 @@ function Container({
   color,
   onChangeName,
   onChangeColor,
-  ...rest
 }) {
   return (
     <div>

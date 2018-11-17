@@ -1,5 +1,5 @@
 dependencies:
-  react: 16.6.3
+  react: 16.0.0
   react-dom: 16.6.3
   react-firebase-subscribable: 0.1.18
   react-scripts: 2.1.1
@@ -8792,17 +8792,17 @@ packages:
       fsevents: 1.2.4
     resolution:
       integrity: sha512-f6KCUy7opItgeana1Ghwj+lYQp5BTHSaivG/dbfiIqSm5QdOIUV5eiFSBsbaAE6GEKqGYmZDK6Yw5WmbrhxaFg==
-  /react/16.6.3:
+  /react/16.0.0:
     dependencies:
+      fbjs: 0.8.17
       loose-envify: 1.4.0
       object-assign: 4.1.1
       prop-types: 15.6.2
-      scheduler: 0.11.2
     dev: false
     engines:
       node: '>=0.10.0'
     resolution:
-      integrity: sha512-zCvmH2vbEolgKxtqXL2wmGCUxUyNheYn/C+PD1YAjfxHC54+MhdruyhO7QieQrYsYeTxrn93PM2y0jRH1zEExw==
+      integrity: sha1-zn348ZQbA28Cssyp29DLHw6FXi0=
   /read-pkg-up/1.0.1:
     dependencies:
       find-up: 1.1.2
@@ -10887,8 +10887,8 @@ shrinkwrapVersion: 3
 specifiers:
   firebase: ^5.5.8
   lodash: ^4.17.11
-  react: ^16.6.3
+  react: ^16.0.0
   react-dom: ^16.6.3
-  react-firebase-subscribable: ^0.1.6
+  react-firebase-subscribable: ^0.1.18
   react-scripts: 2.1.1
   recompose: ^0.30.0

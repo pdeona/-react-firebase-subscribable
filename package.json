@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "0.1.18",
+  "version": "0.1.20",
   "main": "dist/index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
@@ -14,7 +14,6 @@
     "subscriptions"
   ],
   "scripts": {
-    "copy-flowtypes": "",
     "prebuild": "rimraf dist",
     "build": "babel src --out-dir dist",
     "postbuild": "./lib/copy-flowtypes",
@@ -31,7 +30,7 @@
     "flow-bin": "^0.86.0",
     "rimraf": "^2.6.2"
   },
-  "peerDependencies": {
-    "react": "^16.6.3"
+  "dependencies": {
+    "react": "^16.0.0"
   }
 }
