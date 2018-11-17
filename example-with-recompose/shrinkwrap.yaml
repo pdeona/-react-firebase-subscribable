@@ -1,7 +1,7 @@
 dependencies:
   react: 16.6.3
   react-dom: 16.6.3
-  react-firebase-subscribable: 0.1.18
+  react-firebase-subscribable: 'link:..'
   react-scripts: 2.1.1
   recompose: 0.30.0
 devDependencies:
@@ -8725,12 +8725,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
-  /react-firebase-subscribable/0.1.18:
-    dev: false
-    peerDependencies:
-      react: ^16.6.3
-    resolution:
-      integrity: sha512-5cVLMpSesuxdVVBrsmOlog7FtGuV0qO2BnWnxb9//GFLzGZTEWVMkBfyDggqwChPivcChB4slUgJMbbEcTjmsw==
   /react-lifecycles-compat/3.0.4:
     dev: false
     resolution:
@@ -10889,6 +10883,6 @@ specifiers:
   lodash: ^4.17.11
   react: ^16.6.3
   react-dom: ^16.6.3
-  react-firebase-subscribable: ^0.1.18
+  react-firebase-subscribable: ../
   react-scripts: 2.1.1
   recompose: ^0.30.0

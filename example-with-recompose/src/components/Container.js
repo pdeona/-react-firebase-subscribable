@@ -2,7 +2,7 @@ import React from 'react'
 import {
   withAuthSubscription,
   withFirestoreSubscription,
-} from '../dist'
+} from 'react-firebase-subscribable'
 import {
   withState,
   withPropsOnChange,

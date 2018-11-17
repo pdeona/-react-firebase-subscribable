@@ -1,7 +1,7 @@
 dependencies:
   react: 16.6.3
   react-dom: 16.6.3
-  react-firebase-subscribable: 0.1.18
+  react-firebase-subscribable: 'link:..'
   react-scripts: 2.1.1
 devDependencies:
   firebase: 5.5.8
@@ -8691,12 +8691,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
-  /react-firebase-subscribable/0.1.18:
-    dev: false
-    peerDependencies:
-      react: ^16.6.3
-    resolution:
-      integrity: sha512-5cVLMpSesuxdVVBrsmOlog7FtGuV0qO2BnWnxb9//GFLzGZTEWVMkBfyDggqwChPivcChB4slUgJMbbEcTjmsw==
   /react-scripts/2.1.1:
     dependencies:
       '@babel/core': 7.1.0
@@ -10828,5 +10822,5 @@ specifiers:
   lodash: ^4.17.11
   react: ^16.6.3
   react-dom: ^16.6.3
-  react-firebase-subscribable: ^0.1.6
+  react-firebase-subscribable: ../
   react-scripts: 2.1.1
