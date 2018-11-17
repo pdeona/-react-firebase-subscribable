@@ -13,21 +13,18 @@ export const diffRequiredProps = (componentName, props, ...requiredProps) => {
     predicate,
     message = '',
   }) => {
-    if (predicate && !predicate(props[propName])) {
-      return [
+    if (predicate) {
+      return !predicate(props[propName]) ? [
         componentName,
         propName,
         message || `${propName} is required`,
-      ]
+      ] : null
     }
-    if (typeof props[propName] !== propType) {
-      return [
-        componentName,
-        propName,
-        `${propName} is required and should be a ${propType}`,
-      ]
-    }
-    return null
+    return typeof props[propName] !== propType ? [
+      componentName,
+      propName,
+      `${propName} is required and should be a ${propType}`,
+    ] : null
   }).filter(e => !!e)
   return errors.map(err => console.error(new RequiredPropError(...err)))
 }
