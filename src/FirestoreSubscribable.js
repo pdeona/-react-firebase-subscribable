@@ -1,6 +1,5 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { diffRequiredProps } from './shared'
 import type { ComponentType } from 'react'
 import type {
   DocumentReference,
@@ -8,6 +7,7 @@ import type {
   DocumentSnapshot,
   QuerySnapshot,
 } from 'firebase/firestore'
+import { diffRequiredProps } from './shared'
 
 export type FirestoreSubProps = {
   +firestoreRef: (?DocumentReference | ?CollectionReference),
@@ -24,7 +24,7 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
   initRefListener = ({ firestoreRef, onSnapshot }: FirestoreSubProps) => {
     try {
       if (this.refListener) this.refListener()
-      if (!firestoreRef) return;
+      if (!firestoreRef) return
 
       this.refListener = firestoreRef.onSnapshot(onSnapshot)
     } catch (error) {

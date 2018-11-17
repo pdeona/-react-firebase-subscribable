@@ -1,13 +1,13 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { diffRequiredProps } from './shared'
 import type { ComponentType } from 'react'
 import type {
   DataSnapshot,
   Reference,
 } from 'firebase/database'
+import { diffRequiredProps } from './shared'
 
-type RTDBEventType = 'value' 
+type RTDBEventType = 'value'
   | 'child_added'
   | 'child_changed'
   | 'child_removed'
@@ -28,7 +28,7 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
 
   initRefListener = ({ firebaseRef, onSnapshot, eventType = 'value' }: RTDatabaseSubscriberProps) => {
     try {
-      if (!firebaseRef) return;
+      if (!firebaseRef) return
 
       firebaseRef.on(eventType, onSnapshot)
     } catch (error) {

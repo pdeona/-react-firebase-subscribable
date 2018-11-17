@@ -1,9 +1,9 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { diffRequiredProps } from './shared'
 import type { ComponentType } from 'react'
 import type { FirebaseUser } from 'firebase/app'
 import type { Auth } from 'firebase/auth'
+import { diffRequiredProps } from './shared'
 
 
 export type AuthSubscriberProps = {
@@ -36,7 +36,7 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
     }
     try {
       const { firebaseAuth, onAuthStateChanged } = this.props
-  
+
       this.authListener = firebaseAuth.onAuthStateChanged(onAuthStateChanged)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
