@@ -25,7 +25,8 @@ export default (WrappedComponent: ComponentType<*>) => class extends PureCompone
         this.props,
         {
           propName: 'firebaseAuth',
-          predicate: prop => typeof prop.onAuthStateChanged === 'function',
+          predicate: prop => (prop
+            && typeof prop.onAuthStateChanged === 'function'),
           message: 'firebaseAuth is required and should be a firebase app auth instance.',
         },
         {

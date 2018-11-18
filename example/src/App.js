@@ -9,8 +9,6 @@ class App extends PureComponent {
     user: null,
     userProfile: null,
     userProfileRef: null,
-    color: '',
-    name: '',
   }
 
   authStateChanged = user => this.setState(state => ({
@@ -23,23 +21,23 @@ class App extends PureComponent {
     const data = p.data()
     const newProfileState = state => ({
       userProfile: data,
-      color: data ? data.favoriteColor : '',
-      name: data ? data.name : '',
     })
     this.setState(newProfileState)
   }
 
-  onChangeColor = ({ target: { value: color } }) => User.userProfile(this.state.user.uid).set({ favoriteColor: color }, { merge: true })
+  onChangeColor = ({ target: { value: color } }) => 
+    User.userProfile(this.state.user.uid)
+      .set({ favoriteColor: color }, { merge: true })
 
-  onChangeName = ({ target: { value: name } }) => User.userProfile(this.state.user.uid).set({ name }, { merge: true })
+  onChangeName = ({ target: { value: name } }) =>
+    User.userProfile(this.state.user.uid)
+      .set({ name }, { merge: true })
 
   render() {
     const {
       user,
       userProfile,
       userProfileRef,
-      name,
-      color,
     } = this.state
 
     return (
@@ -52,10 +50,6 @@ class App extends PureComponent {
           firestoreRef={userProfileRef}
           onSnapshot={this.onUpdateProfile}
           firebaseAuth={firebase.auth()}
-          form={{
-            name,
-            color,
-          }}
           onChangeUserColor={this.onChangeColor}
           onChangeUserName={this.onChangeName}
         />

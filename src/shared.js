@@ -42,12 +42,15 @@ export const diffRequiredProps = (
         message || `${propName} is required`,
       ] : null
     }
-    const { propName, propType } = spec
-    return typeof props[propName] !== propType ? [
-      componentName,
-      propName,
-      `${propName} is required and should be a ${propType}`,
-    ] : null
+    if (spec.propType) {
+      const { propName, propType } = spec
+      return typeof props[propName] !== propType ? [
+        componentName,
+        propName,
+        `${propName} is required and should be a ${propType}`,
+      ] : null
+    }
+    return null
   })
   return errors
     .filter(e => !!e)

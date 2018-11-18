@@ -12,7 +12,6 @@ function Container({
   updateProfile,
   onChangeUserColor,
   onChangeUserName,
-  form,
 }) {
   return (
     <div>
@@ -30,14 +29,12 @@ function Container({
             <input 
               name="name"
               id="user-name"
-              value={form.name}
               onChange={onChangeUserName}
             />
             <label htmlFor="user-color">Fav. Color:</label>
-            <input 
+            <input
               name="color" 
               id="user-color" 
-              value={form.color}
               onChange={onChangeUserColor}
             />
           </form>
