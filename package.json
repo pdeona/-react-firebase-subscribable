@@ -16,6 +16,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "babel src --out-dir dist",
+    "postbuild": "./lib/copy-flowtypes",
     "deploy": "yarn build && yarn publish"
   },
   "devDependencies": {
