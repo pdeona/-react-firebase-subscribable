@@ -7,3 +7,6 @@ lib/
 .flowconfig
 yarn.lock
 package-lock.json
+shrinkwrap.yaml
+.babelrc
+.eslintrc
