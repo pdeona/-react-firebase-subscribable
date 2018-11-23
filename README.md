@@ -324,7 +324,7 @@ const UserProfile = ({ user }) => {
     <div>
       {
         userProfile ?
-          <span>{userProfile.name}</span> :
+          <span>{userProfile.data().name}</span> :
           <span>Sign in to view your profile</span>
       }
     </div>
@@ -352,7 +352,7 @@ const UserProfile = ({ user }) => {
     <div>
       {
         userProfile ?
-          <span>{userProfile.name}</span> :
+          <span>{userProfile.val().name}</span> :
           <span>Sign in to view your profile</span>
       }
     </div>

@@ -41,7 +41,7 @@ dependencies:
   react-app-polyfill: 0.1.3
   react-dev-utils: 6.1.1
   react-dom: 16.7.0-alpha.2
-  react-firebase-subscribable: 'link:..'
+  react-firebase-subscribable: 1.0.0-alpha.0
   resolve: 1.8.1
   sass-loader: 7.1.0
   style-loader: 0.23.0
@@ -8138,6 +8138,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
+  /react-firebase-subscribable/1.0.0-alpha.0:
+    dependencies:
+      react: 16.7.0-alpha.2
+    dev: false
+    resolution:
+      integrity: sha512-krK+m0Qd75RxhEZJkB2PEtBymXFAO90fsLrx/b0HuOfkssULrO8NvPlC/2mdTXJdIgKZ0djqTUg71rz99NC1SA==
   /react/16.7.0-alpha.2:
     dependencies:
       loose-envify: 1.4.0
@@ -10097,7 +10103,7 @@ specifiers:
   react-app-polyfill: ^0.1.3
   react-dev-utils: ^6.1.1
   react-dom: ^16.7.0-alpha.2
-  react-firebase-subscribable: 'link:..'
+  react-firebase-subscribable: ^1.0.0-alpha.0
   resolve: 1.8.1
   sass-loader: 7.1.0
   style-loader: 0.23.0
