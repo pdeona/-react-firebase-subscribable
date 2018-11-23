@@ -12,7 +12,7 @@ type RTDBEventType = 'value'
   | 'child_moved'
 
 type OnSnapshot = (d: DataSnapshot) => void
-type SnapshotState = [?Reference, OnSnapshot]
+type SnapshotState = [?DataSnapshot, OnSnapshot]
 
 export default function useRTDBSubscription(
   firebaseRef: ?Reference,
@@ -20,7 +20,11 @@ export default function useRTDBSubscription(
 ): ?DataSnapshot {
   const [snap, onSnap]: SnapshotState = useState(null)
   useEffect(
-    () => firebaseRef && firebaseRef.on(eventType, onSnap),
+    () => {
+      if (firebaseRef === null || firebaseRef === undefined) return null
+      firebaseRef.on(eventType, onSnap)
+      return () => firebaseRef.off(eventType, onSnap)
+    },
     [firebaseRef],
   )
   return snap
