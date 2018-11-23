@@ -13,6 +13,9 @@
     "real time",
     "subscriptions"
   ],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "babel src --out-dir dist",
@@ -41,5 +44,13 @@
   },
   "dependencies": {
     "react": "^16.7.0-alpha.2"
-  }
+  },
+  "npmFileMap": [
+    {
+      "basePath": "/dist/",
+      "files": [
+        "*.js"
+      ]
+    }
+  ]
 }
