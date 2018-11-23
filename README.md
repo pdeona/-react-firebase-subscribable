@@ -12,6 +12,10 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 - [withAuthSubscription](#withauthsubscription)
 - [withFirestoreSubscription](#withfirestoresubcription)
 - [withRTDBSubscription](#withrtdbsubscription)
+- [Hooks](#hooks)
+  - [useAuthSubscription](#useauthsubscription)
+  - [useFirestoreSubscription](#usefirestoresubcription)
+  - [useRTDBSubscription](#usertdbsubscription)
 
 [Examples](#examples)
 
@@ -275,6 +279,87 @@ export default class App extends PureComponent {
     )
   }
 }
+```
+
+### Hooks
+
+Note: The hooks API is still unreleased and likely to change. This version should not be used in production.
+
+### useAuthSubscription
+
+useAuthSubscription is a function that accepts a firebase auth instance. the return value (`user` below) will be set upon auth state change.
+
+```js
+import React from 'react'
+import firebase from 'firebase'
+import { useAuthSubscription } from 'react-firebase-subscribable'
+
+const App = () => {
+  const user = useAuthSubscription(firebase.auth())
+  return (
+    <div>
+      {user ? 'Signed in' : 'Signed out'}
+    </div>
+  )
+}
+
+export default App
+```
+
+### useFirestoreSubscription
+
+useFirestoreSubscription is a function that accepts an optional firestore reference. the return value will be updated whenever the data snapshot changes, and the listener subscription will be reinitialized/cleaned up on ref change.
+
+```js
+import React from 'react'
+import firebase from 'firebase'
+import { useFirestoreSubscription } from 'react-firebase-subscribable'
+
+const UserProfile = ({ user }) => {
+  const userRef = user
+    ? firebase.firestore().collection('names').doc(user.uid)
+    : null
+  const userProfile = useFirestoreSubscription(userRef)
+  return (
+    <div>
+      {
+        userProfile ?
+          <span>{userProfile.name}</span> :
+          <span>Sign in to view your profile</span>
+      }
+    </div>
+  )
+}
+
+export default UserProfile
+```
+
+### useRTDBSubscription
+
+useRTDBSubscription is a function that accepts an optional real-time database reference and event type (default is `value`). the return value will be updated whenever the data snapshot changes, and the listener subscription will be reinitialized/cleaned up on ref change.
+
+```js
+import React from 'react'
+import firebase from 'firebase'
+import { useRTDBSubscription } from 'react-firebase-subscribable'
+
+const UserProfile = ({ user }) => {
+  const userRef = user
+    ? firebase.database().ref(`names/${user.uid}`)
+    : null
+  const userProfile = useRTDBSubscription(userRef)
+  return (
+    <div>
+      {
+        userProfile ?
+          <span>{userProfile.name}</span> :
+          <span>Sign in to view your profile</span>
+      }
+    </div>
+  )
+}
+
+export default UserProfile
 ```
 
 ### Examples
