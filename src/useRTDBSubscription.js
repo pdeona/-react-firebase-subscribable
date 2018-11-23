@@ -17,7 +17,7 @@ type SnapshotState = [?Reference, OnSnapshot]
 export default function useRTDBSubscription(
   firebaseRef: ?Reference,
   eventType: RTDBEventType = 'value',
-): ?Reference {
+): ?DataSnapshot {
   const [snap, onSnap]: SnapshotState = useState(null)
   useEffect(
     () => firebaseRef && firebaseRef.on(eventType, onSnap),
