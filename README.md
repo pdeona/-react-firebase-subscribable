@@ -2,6 +2,8 @@
 
 Higher order components to wrap React Components in Firebase Auth/Firestore real-time subscriptions.
 
+##### This is the experimental Hooks API alpha release of `react-firebase-subscribable`. Be sure not to use this one in production, as it depends on react@16.7.0-alpha and the API may change.
+
 ## Table of Contents
 
 [Dependencies](#dependencies)
@@ -23,13 +25,13 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 ## Dependencies
 
-- React ^16.0.0
+- React ^16.7.0-alpha.2
 
 ## Usage
 
 ### As Decorators
 
-All exports work with the ES7 decorator proposal syntax for class decorators:
+All (non-hook) exports work with the ES7 decorator proposal syntax for class decorators:
 
 ```js
 @withAuthSubscription
