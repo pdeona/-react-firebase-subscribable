@@ -13,7 +13,7 @@ const onChangeAttr = attr => user => ({ target: { value } }) => User
 const onChangeColor = onChangeAttr('favoriteColor')
 const onChangeName = onChangeAttr('name')
 
-function Container({
+function App({
   user,
   userProfile,
 }) {
@@ -67,4 +67,4 @@ const withAuthState = connectAuth(mapAuthStateToProps)
 export default compose(
   withFirestoreState,
   withAuthState,
-)(Container)
+)(App)

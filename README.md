@@ -307,7 +307,7 @@ Usage:
 // in root component
 import React from 'react'
 import { FirebaseAuthProvider } from 'react-firebase-subscribable'
-import App from '../FirestoreConnected'
+import App from 'components/App'
 import firebase from 'firebase'
 
 const AuthConnectedRoot = () => (
@@ -326,7 +326,7 @@ export default AuthConnectedRoot
 import React from 'react'
 import { connect } from 'react-redux'
 import { FirebaseAuthProvider } from 'react-firebase-subscribable'
-import App from '../FirestoreConnected'
+import App from 'components/App'
 import { onAuthStateChanged } from '../actions/auth'
 import firebase from 'firebase'
 
@@ -388,7 +388,7 @@ Props:
 // in root component
 import React from 'react'
 import { FirestoreProvider } from 'react-firebase-subscribable'
-import App from '../FirestoreConnected'
+import App from 'components/App'
 import firebase from 'firebase'
 
 const refMapForUser = user => ({
