@@ -12,6 +12,13 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 - [withAuthSubscription](#withauthsubscription)
 - [withFirestoreSubscription](#withfirestoresubcription)
 - [withRTDBSubscription](#withrtdbsubscription)
+- [Context API](#context-api):
+  - [Auth](#auth)
+    - [Firebase Auth Provider](#firebase-auth-provider)
+    - [connectAuth](#connectauth)
+  - [Firestore](#firestore)
+    - [Firestore Provider](#firestore-provider)
+    - [connectFirestore](#connectfirestore)
 
 [Examples](#examples)
 
@@ -277,6 +284,157 @@ export default class App extends PureComponent {
 }
 ```
 
+### Context API
+
+`react-firebase-subscribable` exports `Provider` components and `connect` functions for using Auth/Firestore state via the context API. The api is modeled after Redux's with a few modifications to allow for different use cases. As with the above HOC's, auth state is separated from database subscriptions so the module exports separate Provider/connect functions for each:
+
+### Auth
+
+#### Firebase Auth Provider
+
+Props:
+
+| Name               | Type                   | Required |
+| ------------------ |:----------------------:| --------:|
+| firebaseAuth       | Firebase Auth Instance | true     |
+| onAuthStateChanged | Function               | false    |
+
+`onAuthStateChanged` can be provided to inform external stores of changes to auth state without nesting them inside of `Firebase Auth Provider`, such as if you want to nest it in an existing redux store and dispatch actions to update the store on auth state change, so you can simply use one `connect` if you are already using redux.
+
+Usage:
+
+```js
+// in root component
+import React from 'react'
+import { FirebaseAuthProvider } from 'react-firebase-subscribable'
+import App from '../FirestoreConnected'
+import firebase from 'firebase'
+
+const AuthConnectedRoot = () => (
+  <FirebaseAuthProvider firebaseAuth={firebase.auth()}>
+    <App />
+  </FirebaseAuthProvider>
+)
+
+export default AuthConnectedRoot
+
+/**
+ * with a redux store
+ * Note: this component must be rendered as a child to Redux's
+ * Provider component for this example to work.
+ **/
+import React from 'react'
+import { connect } from 'react-redux'
+import { FirebaseAuthProvider } from 'react-firebase-subscribable'
+import App from '../FirestoreConnected'
+import { onAuthStateChanged } from '../actions/auth'
+import firebase from 'firebase'
+
+const AuthConnectedRoot = ({ onAuthStateChanged }) => (
+  <FirebaseAuthProvider
+    firebaseAuth={firebase.auth()}
+    onAuthStateChanged={onAuthStateChanged}
+  >
+    <App />
+  </FirebaseAuthProvider>
+)
+
+const mapDispatchToProps = dispatch => ({
+  onAuthStateChanged: user => dispatch(onAuthStateChanged(user)),
+})
+
+export default connect(null, mapDispatchToProps)(AuthConnectedRoot)
+```
+
+#### connectAuth
+
+A function that accepts a function `mapAuthStateToProps` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
+
+##### mapAuthStateToProps
+
+`mapAuthStateToProps` should accept the current user and return a `props` object to be applied to the wrapped component:
+
+```js
+// in consumer components
+import React from 'react'
+import { connectAuth } from 'react-firebase-subscribable'
+
+const CurrentUser = ({ user }) => (
+  <div>
+    {user ? user.uid : 'Not signed in'}
+  </div>
+)
+
+const mapAuthStateToProps = user => ({
+  currentUser: user,
+})
+
+export default connectAuth(mapAuthStateToProps)(FirestoreConnected)
+```
+
+### Firestore
+
+#### Firestore Provider
+
+Props:
+
+| Name        | Type                                         | Required |
+| ----------- |:--------------------------------------------:| --------:|
+| refMap      | { [key: string]: ?FirestoreReference }       | true     |
+
+`refMap` should be an object whose keys are strings and whose values are either null or a firestore `Reference`.
+
+```js
+// in root component
+import React from 'react'
+import { FirestoreProvider } from 'react-firebase-subscribable'
+import App from '../FirestoreConnected'
+import firebase from 'firebase'
+
+const refMapForUser = user => ({
+  userProfile: user
+    ? firebase.firestore().collection('user-profiles').doc(user.uid)
+    : null,
+})
+
+const FirestoreConnectedRoot = ({ user }) => (
+  <FirestoreProvider refMap={refMapForUser(user)}>
+    <App />
+  </FirestoreProvider>
+)
+
+export default FirestoreConnectedRoot
+```
+
+#### connectFirestore
+
+A function that accepts a function `mapSnapshotsToProps` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
+
+##### mapSnapshotsToProps
+
+`mapSnapshotsToProps` will receive the current `refMap`'s corresponding snapshots as values in an object with the same keys:
+
+```js
+// in consumer components
+import React from 'react'
+import { connectFirestore } from 'react-firebase-subscribable'
+
+const CurrentUserProfile = ({ userProfile }) => (
+  <div>
+    {userProfile
+      ? <div>Welcome back, {userProfile.name}!</div>
+      : <div>Sign in to view profile</div>
+    }
+  </div>
+)
+
+const mapSnapshotsToProps = ({ userProfile }) => ({
+  userProfile: userProfile ? userProfile.data() : null,
+})
+
+export default connectFirestore(mapSnapshotsToProps)(CurrentUserProfile)
+```
+
 ### Examples
 
 [vanilla React](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example)
@@ -284,6 +442,8 @@ export default class App extends PureComponent {
 [with Recompose](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-recompose)
 
 [as Decorators](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
+
+[Provider/connect example](https://github.com/pdeona/-react-firebase-subscribable/tree/master/store-example)
 
 ## Bugs, Pull Requests
 

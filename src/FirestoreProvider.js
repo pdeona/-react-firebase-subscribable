@@ -5,7 +5,7 @@ export type RefMap = {
   [key: string]: ?FirestoreReference,
 }
 
-export type SnapshotStateMap = $ObjMap<RefMap, (s: FirestoreSnapshot) => FirestoreSnapshot>
+export type SnapshotStateMap = $ObjMap<RefMap, (s: ?FirestoreSnapshot) => ?FirestoreSnapshot>
 
 type FirestoreProviderProps = {
   +refMap: RefMap,
@@ -18,10 +18,15 @@ export const FirestoreContext = createContext<{}>({})
 
 export default class FirestoreProvider extends PureComponent<FirestoreProviderProps, FirestoreProviderState> {
   listeners: {
-    [key: string]: ?() => void,
-  }
+    [key: string]: ?(() => void),
+  };
 
   state = {}
+
+  unregister = (key: string): void => {
+    // $FlowFixMe this.listeners[key] is only called if it _is_ a function
+    if (typeof this.listeners[key] === 'function') this.listeners[key]()
+  }
 
   onSnap: (key: string) => FirestoreSnapHandler = key => snap => {
     this.setState(() => ({ [key]: snap }))
@@ -43,7 +48,7 @@ export default class FirestoreProvider extends PureComponent<FirestoreProviderPr
         .concat(Object.keys(refMap).filter(name => !oldRefNames.includes(name)))
       refNames.forEach(key => {
         if (refMap[key] !== prevProps.refMap[key]) {
-          if (this.listeners[key]) this.listeners[key]()
+          this.unregister(key)
           this.listeners[key] = refMap[key]
             ? refMap[key].onSnapshot(this.onSnap(key))
             : null
@@ -53,9 +58,7 @@ export default class FirestoreProvider extends PureComponent<FirestoreProviderPr
   }
 
   componentWillUnmount() {
-    Object.keys(this.listeners).forEach(key => {
-      if (this.listeners[key]) this.listeners[key]()
-    })
+    Object.keys(this.listeners).forEach(this.unregister)
   }
 
   render() {

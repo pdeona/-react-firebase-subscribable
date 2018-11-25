@@ -6,7 +6,7 @@ import { diffRequiredProps } from './shared'
 
 type AuthProviderProps = {
   +firebaseAuth: Auth,
-  +onAuthStateChanged: ?AuthStateHandler,
+  +onAuthStateChanged?: AuthStateHandler,
   +children: Node,
 }
 

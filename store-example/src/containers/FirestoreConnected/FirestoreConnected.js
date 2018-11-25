@@ -6,19 +6,14 @@ import {
 import App from '../../components/App'
 import User from '../../models/user'
 
-const FirestoreConnected = ({ user }) => {
-  const refMap = {
-    userProfile: user
-      ? User.userProfile(user.uid) : null,
-  }
+const FirestoreConnected = ({ refMap }) => (
+  <FirestoreProvider refMap={refMap}>
+    <App />
+  </FirestoreProvider>
+)
 
-  return (
-    <FirestoreProvider refMap={refMap}>
-      <App user={user} />
-    </FirestoreProvider>
-  )
-}
-
-const mapAuthStateToProps = user => ({ user })
+const mapAuthStateToProps = user => ({
+  refMap: user ? User.userProfile(user.uid) : null,
+})
 
 export default connectAuth(mapAuthStateToProps)(FirestoreConnected)

@@ -6,11 +6,16 @@ import {
 } from 'react-firebase-subscribable'
 import User from '../models/user'
 
+const onChangeAttr = attr => user => ({ target: { value } }) => User
+  .userProfile(user.uid)
+  .set({ [attr]: value }, { merge: true })
+
+const onChangeColor = onChangeAttr('favoriteColor')
+const onChangeName = onChangeAttr('name')
+
 function Container({
   user,
   userProfile,
-  onChangeUserColor,
-  onChangeUserName,
 }) {
   return (
     <div>
@@ -29,13 +34,13 @@ function Container({
               <input
                 name="name"
                 id="user-name"
-                onChange={onChangeUserName}
+                onChange={onChangeName(user)}
               />
               <label htmlFor="user-color">Fav. Color:</label>
               <input
                 name="color"
                 id="user-color"
-                onChange={onChangeUserColor}
+                onChange={onChangeColor(user)}
               />
             </form>
           )
