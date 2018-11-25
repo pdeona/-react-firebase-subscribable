@@ -16,8 +16,7 @@ type FirestoreProviderState = {
   +injectRef: (key: string, ref: FirestoreReference) => void,
 }
 
-export const FirestoreContext = createContext<{}>({
-  refMap: {},
+export const FirestoreContext = createContext<FirestoreProviderState>({
   snapshots: {},
   injectRef: () => {},
 })
@@ -64,7 +63,7 @@ export default class FirestoreProvider extends PureComponent<FirestoreProviderPr
     this.mounted = false
   }
 
-  subscribe = () => {
+  subscribe = (): void => {
     const { refMap } = this.props
 
     this.unsubscribe = refMap.subscribe(() => {

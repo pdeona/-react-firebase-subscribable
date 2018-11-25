@@ -1,11 +1,11 @@
 import React, { PureComponent, type ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import { FirestoreContext, type SnapshotStateMap } from './FirestoreProvider'
+import type { InjectedRef, SnapshotMap } from '@internal/types'
+import { FirestoreContext } from './FirestoreProvider'
 
-type MapFirestoreFn = (s: SnapshotStateMap) => ({ [key: string]: * })
-type RefInjector = { +key: string, +ref: FirestoreReference }
+type MapFirestoreFn = (s: SnapshotMap) => ({ [key: string]: * })
 
-export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: RefInjector) => (WrappedComponent: ComponentType<*>) => {
+export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRef[]) => (WrappedComponent: ComponentType<*>) => {
   class FirestoreConsumerHOC extends PureComponent {
     static displayName = `firestoreConnected${
       WrappedComponent.displayName || WrappedComponent.name

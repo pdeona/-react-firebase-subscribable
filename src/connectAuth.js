@@ -11,6 +11,8 @@ export default (mapAuthStateToProps: MapAuthStateFn) => (WrappedComponent: Compo
       WrappedComponent.displayName || WrappedComponent.name
     }`
 
+    static contextType = AuthContext
+
     render() {
       return (
         <AuthContext.Consumer>

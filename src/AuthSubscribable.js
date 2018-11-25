@@ -25,7 +25,7 @@ export default (WrappedComponent: ComponentType<*>) => {
           this.props,
           {
             propName: 'firebaseAuth',
-            predicate: prop => (prop
+            predicate: (prop: ?Auth) => (prop != null
               && typeof prop.onAuthStateChanged === 'function'),
             message: 'firebaseAuth is required and should be a firebase app auth instance.',
           },

@@ -3,7 +3,6 @@ import $observable from 'symbol-observable'
 import type {
   RefMap,
   ObservableRefMap,
-  InjectedRef,
   SnapshotMap,
   SnapshotListenerMap,
   StateObserver,
@@ -68,12 +67,15 @@ export default function createObservableRefMap(
       return
     }
     currentRefs = Object.assign({}, initialRefs, { [key]: ref })
+    /**
+     * the ref has changed, unsubscribe the old listener
+     */
     if (Reflect.has(snapshotListeners, key)) {
       unsub(snapshotListeners[key])
     }
     /**
      * clear the snapshot from
-     * state if the ref is gone
+     * state if the ref is null
      * but we have a snap stored
      */
     if (Reflect.has(snapshotState, key) && !ref) {

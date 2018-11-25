@@ -24,7 +24,8 @@ declare module '@internal/types' {
     [key: string]: ?() => void,
   }
 
-  declare type Dispatch = (snap: FirestoreSnapshot) => void
+  declare type UpdateSnapshotActn = { +key: string, +snap: FirestoreSnapshot }
+  declare type Dispatch = (a: UpdateSnapshotActn) => void
 
   declare type FirestoreSnapHandler = (snap: ?FirestoreSnapshot) => void
 
