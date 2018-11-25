@@ -453,11 +453,15 @@ const CurrentUserProfile = ({ userProfile }) => (
   </div>
 )
 
-const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+// userProfile will be injected when this component connects
 const mapSnapshotsToProps = ({ userProfile }) => ({
   userProfile: userProfile ? userProfile.data() : null,
 })
 
+// ref can be a function, will be called with (props) as an arg
+const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+
+// inject userProfileRef using key 'userProfile'
 const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
 
 export default withFirestoreState(CurrentUserProfile)
