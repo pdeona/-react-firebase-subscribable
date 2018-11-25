@@ -1,4 +1,5 @@
 declare module '@internal/types' {
+  import typeof $observable from 'symbol-observable'
   import type { FirebaseUser } from 'firebase/app'
   import type {
     DocumentReference,
@@ -26,18 +27,39 @@ declare module '@internal/types' {
   declare type Dispatch = (snap: FirestoreSnapshot) => void
 
   declare type FirestoreSnapHandler = (snap: ?FirestoreSnapshot) => void
+
   declare type InjectedRef = {
     +key: string,
-    +ref: FirestoreReference,
+    +ref: ?FirestoreReference,
   }
-  declare type ObservableRefMap = {
-    getState: () => SnapshotMap,
-    injectRef: (i: InjectedRef) => void,
-    subscribe: (sub: () => void) => () => void,
+
+  declare type Observer<S> = {
+    +next: (v: ?S) => void,
+    +error: (e: Error) => void,
+    +complete: () => void,
+    +closed?: boolean,
+  }
+
+  declare type StateObserverFn = () => void
+
+  declare type ObsUnsubscribe = { +unsubscribe: () => void }
+
+  declare type Observable<S> = {
+    subscribe: (o: Observer<S>) => ObsUnsubscribe,
+    // $FlowFixMe symbols not yet supported
+    [$observable]: () => Observable<S>,
   }
 
   declare type StateObserver = {
     +id: number,
-    +observer: () => void,
+    +observer: StateObserverFn,
+  }
+
+  declare type ObservableRefMap = {
+    getState: () => SnapshotMap,
+    injectRef: (i: InjectedRef) => void,
+    subscribe: (sub: StateObserverFn) => () => void,
+    // $FlowFixMe symbols not yet supported
+    [$observable]: () => Observable<SnapshotMap>,
   }
 }
