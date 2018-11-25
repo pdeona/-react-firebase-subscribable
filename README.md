@@ -4,8 +4,6 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 ## Table of Contents
 
-[Dependencies](#dependencies)
-
 [Usage](#usage)
 
 - [As Decorators](#as-decorators)
@@ -23,11 +21,9 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 [Examples](#examples)
 
+[Dependencies](#dependencies)
+
 [Bugs, Pull Requests](#bugs-pull-requests)
-
-## Dependencies
-
-- React ^16.6.0
 
 ## Usage
 
@@ -478,6 +474,16 @@ export default withFirestoreState(CurrentUserProfile)
 [as Decorators](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
 
 [Provider/connect example](https://github.com/pdeona/-react-firebase-subscribable/tree/master/store-example)
+
+## Dependencies
+
+- `react` `^16.6.0`
+- `symbol-observable` `^1.2.0`
+- `hoist-non-react-statics` `^3.1.0`
+
+### Peer Dependencies
+
+- `react-dom` `^16.6.0`
 
 ## Bugs, Pull Requests
 

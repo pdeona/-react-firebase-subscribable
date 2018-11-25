@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "dist/index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
@@ -43,5 +43,8 @@
     "hoist-non-react-statics": "^3.1.0",
     "react": "^16.6.0",
     "symbol-observable": "^1.2.0"
+  },
+  "peerDependencies": {
+    "react-dom": "^16.6.0"
   }
 }
