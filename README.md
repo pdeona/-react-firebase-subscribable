@@ -459,7 +459,9 @@ const mapSnapshotsToProps = ({ userProfile }) => ({
 })
 
 // ref can be a function, will be called with (props) as an arg
-const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+const userProfileRef = ({ user }) => (user
+  ? firebase.firestore().collection('user-profiles').doc(user.uid)
+  : null)
 
 // inject userProfileRef using key 'userProfile'
 const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
