@@ -370,7 +370,7 @@ const mapAuthStateToProps = user => ({
   currentUser: user,
 })
 
-export default connectAuth(mapAuthStateToProps)(FirestoreConnected)
+export default connectAuth(mapAuthStateToProps)(CurrentUser)
 ```
 
 ### Firestore

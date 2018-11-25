@@ -3,7 +3,6 @@ import compose from 'lodash/fp/compose'
 import {
   connectFirestore,
   connectAuth,
-  injectRef,
 } from 'react-firebase-subscribable'
 import User from '../models/user'
 

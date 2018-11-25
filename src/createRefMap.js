@@ -89,7 +89,7 @@ export default function createObservableRefMap(
   /**
    * Interoperability point for observable/reactive libraries.
    */
-  function observable(): Observable<SnapshotMap> {
+  function observable() {
     const subs = subscribe
     return {
       subscribe(observer: Observer<SnapshotMap>) {
