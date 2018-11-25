@@ -6,3 +6,5 @@ SRC="./src"
 for file in $(ls $SRC); do
   cp "$SRC/$file" "$DIST/$file.flow"
 done
+cp "./flow-typed/internal_types.js" "$DIST/types.js.flow"
+

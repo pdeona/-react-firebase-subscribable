@@ -3,17 +3,47 @@ import hoistNonReactStatics from 'hoist-non-react-statics'
 import { FirestoreContext, type SnapshotStateMap } from './FirestoreProvider'
 
 type MapFirestoreFn = (s: SnapshotStateMap) => ({ [key: string]: * })
+type RefInjector = { +key: string, +ref: FirestoreReference }
 
-export default (mapSnapshotsToProps: MapFirestoreFn) => (WrappedComponent: ComponentType<*>) => {
+export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: RefInjector) => (WrappedComponent: ComponentType<*>) => {
   class FirestoreConsumerHOC extends PureComponent {
     static displayName = `firestoreConnected${
       WrappedComponent.displayName || WrappedComponent.name
     }`
 
+    static contextType = FirestoreContext
+
+    injectRef = ({ key, ref }) => {
+      const { injectRef } = this.context
+      if (typeof ref === 'function') injectRef(key, ref(this.props))
+      else injectRef(key, ref)
+    }
+
+    removeInjected = ({ key }) => {
+      const { injectRef } = this.context
+      injectRef(key, null)
+    }
+
+    updateInjected = ({ key, ref }) => {
+      if (typeof ref === 'function') this.injectRef({ key, ref })
+    }
+
+    componentDidMount() {
+      injectedRefs.forEach(this.injectRef)
+    }
+
+    componentDidUpdate(prevProps) {
+      if (prevProps !== this.props) injectedRefs.forEach(this.updateInjected)
+    }
+
+    componentWillUnmount() {
+      injectedRefs.forEach(this.removeInjected)
+    }
+
     render() {
       return (
         <FirestoreContext.Consumer>
-          {snaps => (
+          {({ snapshots: snaps }) => (
             <WrappedComponent {...mapSnapshotsToProps(snaps)} {...this.props} />
           )}
         </FirestoreContext.Consumer>

@@ -2,6 +2,7 @@
 import React, { createContext, PureComponent, type Node } from 'react'
 import type { FirebaseUser } from 'firebase/app'
 import type { Auth } from 'firebase/auth'
+import type { AuthStateHandler } from '@internal/types'
 import { diffRequiredProps } from './shared'
 
 type AuthProviderProps = {

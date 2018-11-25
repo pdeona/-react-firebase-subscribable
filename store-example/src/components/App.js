@@ -3,6 +3,7 @@ import compose from 'lodash/fp/compose'
 import {
   connectFirestore,
   connectAuth,
+  injectRef,
 } from 'react-firebase-subscribable'
 import User from '../models/user'
 
@@ -13,58 +14,61 @@ const onChangeAttr = attr => user => ({ target: { value } }) => User
 const onChangeColor = onChangeAttr('favoriteColor')
 const onChangeName = onChangeAttr('name')
 
-function App({
-  user,
-  userProfile,
-}) {
-  return (
-    <div>
-      <div className="profile-info">
-        {user
-          ? userProfile
-            ? `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!'
-          : 'Sign in to view profile'
+class App extends React.PureComponent {
+  render() {
+    const { user, userProfile } = this.props
+    console.log(this.props, this.context)
+    return (
+      <div>
+        <div className="profile-info">
+          {user
+            ? userProfile
+              ? `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!'
+            : 'Sign in to view profile'
+          }
+        </div>
+        {
+          user
+            && (
+              <form>
+                <label htmlFor="user-name">Name:</label>
+                <input
+                  name="name"
+                  id="user-name"
+                  onChange={onChangeName(user)}
+                />
+                <label htmlFor="user-color">Fav. Color:</label>
+                <input
+                  name="color"
+                  id="user-color"
+                  onChange={onChangeColor(user)}
+                />
+              </form>
+            )
         }
+        <button onClick={user ? User.signOut : User.signInAnonymously}>
+          Sign
+          {' '}
+          {user ? 'Out' : 'In'}
+        </button>
       </div>
-      {
-        user
-          && (
-            <form>
-              <label htmlFor="user-name">Name:</label>
-              <input
-                name="name"
-                id="user-name"
-                onChange={onChangeName(user)}
-              />
-              <label htmlFor="user-color">Fav. Color:</label>
-              <input
-                name="color"
-                id="user-color"
-                onChange={onChangeColor(user)}
-              />
-            </form>
-          )
-      }
-      <button onClick={user ? User.signOut : User.signInAnonymously}>
-        Sign
-        {' '}
-        {user ? 'Out' : 'In'}
-      </button>
-    </div>
-  )
+    )
+  }
 }
 
 const mapSnapshotsToProps = ({ userProfile }) => ({
   userProfile: userProfile ? userProfile.data() : null,
 })
 
-const withFirestoreState = connectFirestore(mapSnapshotsToProps)
+const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+
+const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
 
 const mapAuthStateToProps = user => ({ user })
 
 const withAuthState = connectAuth(mapAuthStateToProps)
 
 export default compose(
-  withFirestoreState,
   withAuthState,
+  withFirestoreState,
 )(App)

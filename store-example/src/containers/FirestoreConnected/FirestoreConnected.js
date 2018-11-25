@@ -1,19 +1,16 @@
 import React from 'react'
 import {
   FirestoreProvider,
-  connectAuth,
+  createRefMap,
 } from 'react-firebase-subscribable'
 import App from '../../components/App'
-import User from '../../models/user'
 
-const FirestoreConnected = ({ refMap }) => (
+const refMap = createRefMap()
+
+const FirestoreConnected = () => (
   <FirestoreProvider refMap={refMap}>
     <App />
   </FirestoreProvider>
 )
 
-const mapAuthStateToProps = user => ({
-  refMap: { userProfile: user ? User.userProfile(user.uid) : null },
-})
-
-export default connectAuth(mapAuthStateToProps)(FirestoreConnected)
+export default FirestoreConnected

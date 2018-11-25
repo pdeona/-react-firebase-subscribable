@@ -17,6 +17,7 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
     - [Firebase Auth Provider](#firebase-auth-provider)
     - [connectAuth](#connectauth)
   - [Firestore](#firestore)
+    - [createRefMap](#createrefmap)
     - [Firestore Provider](#firestore-provider)
     - [connectFirestore](#connectfirestore)
 
@@ -374,31 +375,31 @@ export default connectAuth(mapAuthStateToProps)(FirestoreConnected)
 
 ### Firestore
 
+#### createRefMap
+
+A function that returns an observable refmap for the provider to subscribe to. accepts an optional `initialRefMap`, where each key is a string and each value is a ref or null, and returns a `refMap` that can be passed into the Provider.
+
 #### Firestore Provider
 
 Props:
 
 | Name        | Type                                         | Required |
 | ----------- |:--------------------------------------------:| --------:|
-| refMap      | { [key: string]: ?FirestoreReference }       | true     |
+| refMap      | returned from `createRefMap`                 | true     |
 
 `refMap` should be an object whose keys are strings and whose values are either null or a firestore `Reference`.
 
 ```js
 // in root component
 import React from 'react'
-import { FirestoreProvider } from 'react-firebase-subscribable'
+import { FirestoreProvider, createRefMap } from 'react-firebase-subscribable'
 import App from 'components/App'
 import firebase from 'firebase'
 
-const refMapForUser = user => ({
-  userProfile: user
-    ? firebase.firestore().collection('user-profiles').doc(user.uid)
-    : null,
-})
+const refMap = createRefMap()
 
-const FirestoreConnectedRoot = ({ user }) => (
-  <FirestoreProvider refMap={refMapForUser(user)}>
+const FirestoreConnectedRoot = () => (
+  <FirestoreProvider refMap={refMap}>
     <App />
   </FirestoreProvider>
 )
@@ -408,7 +409,7 @@ export default FirestoreConnectedRoot
 
 #### connectFirestore
 
-A function that accepts a function `mapSnapshotsToProps` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
+A function that accepts a function `mapSnapshotsToProps` and a list of `injectedRefs` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
 
 ##### mapSnapshotsToProps
 
@@ -433,6 +434,33 @@ const mapSnapshotsToProps = ({ userProfile }) => ({
 })
 
 export default connectFirestore(mapSnapshotsToProps)(CurrentUserProfile)
+```
+
+##### injectedRefs
+
+`...injectedRefs` can be passed into any firestore-connected component, and should have the form { key: string, ref: (Firestore Reference | Function) }. if the provided ref is a function it will be called with the component's props:
+
+```js
+import React from 'react'
+import { connectFirestore } from 'react-firebase-subscribable'
+
+const CurrentUserProfile = ({ userProfile }) => (
+  <div>
+    {userProfile
+      ? <div>Welcome back, {userProfile.name}!</div>
+      : <div>Sign in to view profile</div>
+    }
+  </div>
+)
+
+const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+const mapSnapshotsToProps = ({ userProfile }) => ({
+  userProfile: userProfile ? userProfile.data() : null,
+})
+
+const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
+
+export default withFirestoreState(CurrentUserProfile)
 ```
 
 ### Examples

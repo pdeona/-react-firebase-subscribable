@@ -1,7 +1,10 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { PureComponent, type ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import type { ComponentType } from 'react'
+import type {
+  FirestoreReference,
+  FirestoreSnapHandler,
+} from '@internal/types'
 import { diffRequiredProps } from './shared'
 
 export type FirestoreSubProps = {

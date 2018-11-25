@@ -1,64 +1,83 @@
 // @flow
 import React, { createContext, PureComponent, type Node } from 'react'
-
-export type RefMap = {
-  [key: string]: ?FirestoreReference,
-}
-
-export type SnapshotStateMap = $ObjMap<RefMap, (s: ?FirestoreSnapshot) => ?FirestoreSnapshot>
+import type {
+  ObservableRefMap,
+  FirestoreReference,
+  SnapshotMap,
+} from '@internal/types'
 
 type FirestoreProviderProps = {
-  +refMap: RefMap,
+  +refMap: ObservableRefMap,
   +children: Node,
 }
 
-type FirestoreProviderState = SnapshotStateMap
+type FirestoreProviderState = {
+  +snapshots: SnapshotMap,
+  +injectRef: (key: string, ref: FirestoreReference) => void,
+}
 
-export const FirestoreContext = createContext<{}>({})
+export const FirestoreContext = createContext<{}>({
+  refMap: {},
+  snapshots: {},
+  injectRef: () => {},
+})
 
 export default class FirestoreProvider extends PureComponent<FirestoreProviderProps, FirestoreProviderState> {
+  mounted: boolean;
+
   listeners: {
     [key: string]: ?(() => void),
   };
 
-  state = {}
+  unsubscribe: () => void;
 
-  unregister = (key: string): void => {
-    // $FlowFixMe this.listeners[key] is only called if it _is_ a function
-    if (typeof this.listeners[key] === 'function') this.listeners[key]()
+  constructor(props: FirestoreProviderProps) {
+    super(props)
+    this.mounted = false
+    this.state = {
+      snapshots: {}, // eslint-disable-line react/no-unused-state
+      injectRef: this.injectRef, // eslint-disable-line react/no-unused-state
+    }
   }
 
-  onSnap: (key: string) => FirestoreSnapHandler = key => snap => {
-    this.setState(() => ({ [key]: snap }))
+  injectRef = (key: string, ref: FirestoreReference): void => {
+    const { refMap } = this.props
+    refMap.injectRef({ key, ref })
   }
 
   componentDidMount() {
-    const { refMap } = this.props
-
-    this.listeners = Object.keys(refMap).reduce((acc, key) => (refMap[key]
-      ? { ...acc, [key]: refMap[key].onSnapshot(this.onSnap(key)) }
-      : acc), {})
+    this.mounted = true
+    this.subscribe()
   }
 
   componentDidUpdate(prevProps: FirestoreProviderProps) {
     const { refMap } = this.props
-    if (prevProps.refMap !== refMap) {
-      const oldRefNames = Object.keys(prevProps.refMap)
-      const refNames = oldRefNames
-        .concat(Object.keys(refMap).filter(name => !oldRefNames.includes(name)))
-      refNames.forEach(key => {
-        if (refMap[key] !== prevProps.refMap[key]) {
-          this.unregister(key)
-          this.listeners[key] = refMap[key]
-            ? refMap[key].onSnapshot(this.onSnap(key))
-            : null
-        }
-      })
+    if (refMap !== prevProps.refMap) {
+      if (this.unsubscribe) this.unsubscribe()
+
+      this.subscribe()
     }
   }
 
   componentWillUnmount() {
-    Object.keys(this.listeners).forEach(this.unregister)
+    if (this.unsubscribe) this.unsubscribe()
+    this.mounted = false
+  }
+
+  subscribe = () => {
+    const { refMap } = this.props
+
+    this.unsubscribe = refMap.subscribe(() => {
+      if (!this.mounted) return
+
+      const newSnapshotState = refMap.getState()
+      this.setState(state => {
+        if (newSnapshotState === state.snapshots) {
+          return null
+        }
+        return { snapshots: newSnapshotState }
+      })
+    })
   }
 
   render() {
