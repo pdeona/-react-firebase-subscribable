@@ -1,4 +1,5 @@
 // @flow
+import $observable from 'symbol-observable'
 import type {
   RefMap,
   ObservableRefMap,
@@ -75,9 +76,39 @@ export default function createObservableRefMap(
     )
   }
 
+  /**
+ * Interoperability point for observable/reactive libraries.
+ */
+  function observable() {
+    const subs = subscribe
+    return {
+      subscribe(observer) {
+        if (typeof observer !== 'object' || observer === null) {
+          throw new TypeError('Expected the observer to be an object.')
+        }
+
+        function observe() {
+          if (observer.next) {
+            observer.next(getState())
+          }
+        }
+
+        observe()
+        const unsubscribe = subs(observe)
+        return { unsubscribe }
+      },
+
+      [$observable]() {
+        return this
+      }
+    }
+  }
+
+
   return {
     getState,
     subscribe,
     injectRef,
+    [$observable]: observable,
   }
 }

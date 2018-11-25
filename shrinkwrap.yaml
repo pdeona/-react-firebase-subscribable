@@ -2,6 +2,7 @@ dependencies:
   hoist-non-react-statics: 3.1.0
   react: 16.6.3
   react-firebase-subscribable: 'link:'
+  symbol-observable: 1.2.0
 devDependencies:
   '@babel/cli': 7.1.5
   '@babel/core': 7.1.6
@@ -3247,6 +3248,12 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==
+  /symbol-observable/1.2.0:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
   /table/5.1.0:
     dependencies:
       ajv: 6.5.5
@@ -3454,3 +3461,4 @@ specifiers:
   hoist-non-react-statics: ^3.1.0
   react: ^16.6.0
   rimraf: ^2.6.2
+  symbol-observable: ^1.2.0
