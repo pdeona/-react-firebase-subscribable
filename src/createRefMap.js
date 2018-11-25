@@ -69,6 +69,9 @@ export default function createObservableRefMap(
     if (Reflect.has(snapshotListeners, key)) {
       unsub(snapshotListeners[key])
     }
+    if (snapshotState[key] && !ref) {
+      dispatch({ key, snap: null })
+    }
     snapshotListeners = Object.assign(
       {},
       snapshotListeners,

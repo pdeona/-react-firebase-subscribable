@@ -77,6 +77,15 @@ export default class FirestoreProvider extends PureComponent<FirestoreProviderPr
         }
         return { snapshots: newSnapshotState }
       })
+
+      // handle dispatches sent since we updated
+      const postUpdateState = refMap.getState()
+      this.setState(state => {
+        if (postUpdateState === state.snapshots) {
+          return null
+        }
+        return { snapshots: postUpdateState }
+      })
     })
   }
 
