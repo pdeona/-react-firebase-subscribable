@@ -2,17 +2,11 @@
 import React, { PureComponent } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import type { ComponentType } from 'react'
-import type {
-  DocumentReference,
-  CollectionReference,
-  DocumentSnapshot,
-  QuerySnapshot,
-} from 'firebase/firestore'
 import { diffRequiredProps } from './shared'
 
 export type FirestoreSubProps = {
-  +firestoreRef: (?DocumentReference | ?CollectionReference),
-  +onSnapshot: (?DocumentSnapshot | ?QuerySnapshot) => void,
+  +firestoreRef: ?FirestoreReference,
+  +onSnapshot: FirestoreSnapHandler,
 }
 
 export default (WrappedComponent: ComponentType<*>) => {

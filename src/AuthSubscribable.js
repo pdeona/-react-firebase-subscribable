@@ -1,14 +1,12 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { PureComponent, type ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import type { ComponentType } from 'react'
-import type { FirebaseUser } from 'firebase/app'
 import type { Auth } from 'firebase/auth'
 import { diffRequiredProps } from './shared'
 
 export type AuthSubscriberProps = {
   +firebaseAuth: Auth,
-  +onAuthStateChanged: (?FirebaseUser) => void,
+  +onAuthStateChanged: AuthStateHandler,
 }
 
 export default (WrappedComponent: ComponentType<*>) => {
