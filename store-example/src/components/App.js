@@ -17,7 +17,6 @@ const onChangeName = onChangeAttr('name')
 class App extends React.PureComponent {
   render() {
     const { user, userProfile } = this.props
-    console.log(this.props, this.context)
     return (
       <div>
         <div className="profile-info">
