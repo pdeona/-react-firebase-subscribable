@@ -47,7 +47,7 @@ export default function createObservableRefMap(
   }
 
   function subscribe(observer: () => void) {
-    const subscription = { id: id++, observer } // eslint-disable-line no-plusplus
+    const subscription: StateObserver = { id: id++, observer } // eslint-disable-line no-plusplus
     stateSubs = stateSubs.concat(subscription)
     return function unsubscribe() {
       stateSubs = stateSubs.splice(stateSubs.indexOf(subscription), 1)
@@ -69,7 +69,12 @@ export default function createObservableRefMap(
     if (Reflect.has(snapshotListeners, key)) {
       unsub(snapshotListeners[key])
     }
-    if (snapshotState[key] && !ref) {
+    /**
+     * clear the snapshot from
+     * state if the ref is gone
+     * but we have a snap stored
+     */
+    if (Reflect.has(snapshotState, key) && !ref) {
       dispatch({ key, snap: null })
     }
     snapshotListeners = Object.assign(
@@ -80,8 +85,8 @@ export default function createObservableRefMap(
   }
 
   /**
- * Interoperability point for observable/reactive libraries.
- */
+   * Interoperability point for observable/reactive libraries.
+   */
   function observable() {
     const subs = subscribe
     return {
@@ -106,7 +111,6 @@ export default function createObservableRefMap(
       }
     }
   }
-
 
   return {
     getState,
