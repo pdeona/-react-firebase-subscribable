@@ -26,7 +26,7 @@ Higher order components to wrap React Components in Firebase Auth/Firestore real
 
 ## Dependencies
 
-- React ^16.0.0
+- React ^16.6.0
 
 ## Usage
 
