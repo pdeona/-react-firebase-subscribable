@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "0.1.23",
+  "version": "0.1.25",
   "main": "dist/index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
@@ -40,6 +40,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "hoist-non-react-statics": "^3.1.0",
     "react": "^16.0.0"
   }
 }
