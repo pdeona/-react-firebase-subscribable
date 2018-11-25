@@ -1,11 +1,11 @@
 import React from 'react'
 import { FirebaseAuthProvider } from 'react-firebase-subscribable'
-import App from '../FirestoreConnected'
+import FirestoreConnectedRoot from '../FirestoreConnected'
 import firebase from '../../firebase'
 
 const AuthConnected = () => (
   <FirebaseAuthProvider firebaseAuth={firebase.auth()}>
-    <App />
+    <FirestoreConnectedRoot />
   </FirebaseAuthProvider>
 )
 

@@ -3,7 +3,7 @@ import {
   FirestoreProvider,
   connectAuth,
 } from 'react-firebase-subscribable'
-import App from '../../components/App'
+import App from '../../components/Container'
 import User from '../../models/user'
 
 const FirestoreConnected = ({ refMap }) => (
@@ -13,7 +13,7 @@ const FirestoreConnected = ({ refMap }) => (
 )
 
 const mapAuthStateToProps = user => ({
-  refMap: user ? User.userProfile(user.uid) : null,
+  refMap: { userProfile: user ? User.userProfile(user.uid) : null },
 })
 
 export default connectAuth(mapAuthStateToProps)(FirestoreConnected)
