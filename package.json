@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
