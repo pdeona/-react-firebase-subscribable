@@ -44,7 +44,7 @@ export const diffRequiredProps = (
     }
     if (spec.propType) {
       const { propName, propType } = spec
-      return typeof props[propName] !== propType ? [
+      return typeof props[propName] !== propType ? [ // eslint-disable-line valid-typeof
         componentName,
         propName,
         `${propName} is required and should be a ${propType}`,

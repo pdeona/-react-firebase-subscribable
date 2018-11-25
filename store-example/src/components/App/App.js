@@ -1,16 +1,14 @@
-import React, { Component } from 'react';
-import { connectAuthState } from 'react-firebase-subscribable'
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import User from '../../models/user'
+import Container from '../Container'
+import './App.css'
 
 class App extends Component {
-  onChangeColor = ({ target: { value: color } }) => 
-    User.userProfile(this.props.user.uid)
-      .set({ favoriteColor: color }, { merge: true })
+  onChangeColor = ({ target: { value: color } }) => User.userProfile(this.props.user.uid)
+    .set({ favoriteColor: color }, { merge: true })
 
-  onChangeName = ({ target: { value: name } }) =>
-    User.userProfile(this.props.user.uid)
-      .set({ name }, { merge: true })
+  onChangeName = ({ target: { value: name } }) => User.userProfile(this.props.user.uid)
+    .set({ name }, { merge: true })
 
   render() {
     return (
@@ -20,10 +18,8 @@ class App extends Component {
           onChangeUserColor={this.onChangeColor}
         />
       </div>
-    );
+    )
   }
 }
 
-const mapAuthStateToProps = user => ({ user })
-
-export default connectAuthState(mapAuthStateToProps)(App);
+export default App
