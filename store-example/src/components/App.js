@@ -14,45 +14,42 @@ const onChangeAttr = attr => user => ({ target: { value } }) => User
 const onChangeColor = onChangeAttr('favoriteColor')
 const onChangeName = onChangeAttr('name')
 
-class App extends React.PureComponent {
-  render() {
-    const { user, userProfile } = this.props
-    return (
-      <div>
-        <div className="profile-info">
-          {user
-            ? userProfile
-              ? `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!'
-            : 'Sign in to view profile'
-          }
-        </div>
-        {
-          user
-            && (
-              <form>
-                <label htmlFor="user-name">Name:</label>
-                <input
-                  name="name"
-                  id="user-name"
-                  onChange={onChangeName(user)}
-                />
-                <label htmlFor="user-color">Fav. Color:</label>
-                <input
-                  name="color"
-                  id="user-color"
-                  onChange={onChangeColor(user)}
-                />
-              </form>
-            )
+function App({ user, userProfile }) {
+  return (
+    <div>
+      <div className="profile-info">
+        {user
+          ? userProfile
+            ? `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!'
+          : 'Sign in to view profile'
         }
-        <button onClick={user ? User.signOut : User.signInAnonymously}>
-          Sign
-          {' '}
-          {user ? 'Out' : 'In'}
-        </button>
       </div>
-    )
-  }
+      {
+        user
+          && (
+            <form>
+              <label htmlFor="user-name">Name:</label>
+              <input
+                name="name"
+                id="user-name"
+                onChange={onChangeName(user)}
+              />
+              <label htmlFor="user-color">Fav. Color:</label>
+              <input
+                name="color"
+                id="user-color"
+                onChange={onChangeColor(user)}
+              />
+            </form>
+          )
+      }
+      <button onClick={user ? User.signOut : User.signInAnonymously}>
+        Sign
+        {' '}
+        {user ? 'Out' : 'In'}
+      </button>
+    </div>
+  )
 }
 
 const mapSnapshotsToProps = ({ userProfile }) => ({
@@ -68,6 +65,8 @@ const mapAuthStateToProps = user => ({ user })
 const withAuthState = connectAuth(mapAuthStateToProps)
 
 export default compose(
+  // withAuthState should be the outermost enhancer to ensure withFirestoreState
+  // receives `user` as a prop
   withAuthState,
   withFirestoreState,
 )(App)
