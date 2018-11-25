@@ -5,8 +5,10 @@ import type {
   ObservableRefMap,
   InjectedRef,
   SnapshotMap,
-  StateObserver,
   SnapshotListenerMap,
+  StateObserver,
+  Observer,
+  Observable,
 } from '@internal/types'
 
 /**
@@ -46,7 +48,7 @@ export default function createObservableRefMap(
     return snapshotState
   }
 
-  function subscribe(observer: () => void) {
+  function subscribe(observer) {
     const subscription: StateObserver = { id: id++, observer } // eslint-disable-line no-plusplus
     stateSubs = stateSubs.concat(subscription)
     return function unsubscribe() {
@@ -61,7 +63,7 @@ export default function createObservableRefMap(
     }
   }
 
-  function injectRef({ key, ref }: InjectedRef) {
+  function injectRef({ key, ref }) {
     if (Reflect.has(currentRefs, key) && currentRefs[key] === ref) {
       return
     }
@@ -87,10 +89,10 @@ export default function createObservableRefMap(
   /**
    * Interoperability point for observable/reactive libraries.
    */
-  function observable() {
+  function observable(): Observable<SnapshotMap> {
     const subs = subscribe
     return {
-      subscribe(observer) {
+      subscribe(observer: Observer<SnapshotMap>) {
         if (typeof observer !== 'object' || observer === null) {
           throw new TypeError('Expected the observer to be an object.')
         }
@@ -105,8 +107,8 @@ export default function createObservableRefMap(
         const unsubscribe = subs(observe)
         return { unsubscribe }
       },
-
-      [$observable]() {
+      // $FlowFixMe Symbols
+      [$observable](): Observable<SnapshotMap> {
         return this
       }
     }
