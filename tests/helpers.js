@@ -17,7 +17,25 @@ class DBSubscriber extends PureComponent {
   }
 }
 
+const mockSnapshot = {
+  data: jest.fn(() => 'mock value')
+}
+
+const mockCollection = jest.fn(() => ({
+  onSnapshot(cb) {
+    cb(mockSnapshot)
+    return mockCleanup
+  },
+}))
+
+const mockFirestore = {
+  firestore: jest.fn(() => ({
+    collection: jest.fn
+  }))
+}
+
 export {
   AuthSubscriber,
   DBSubscriber,
+  mockFirestore,
 }
