@@ -1,7 +1,7 @@
 {
   "name": "react-firebase-subscribable",
   "version": "1.0.12",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
   "repository": "github:pdeona/-react-firebase-subscribable",
@@ -14,9 +14,9 @@
     "subscriptions"
   ],
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "babel src --out-dir dist",
-    "postbuild": "./lib/copy-flowtypes",
+    "prebuild": "rimraf lib",
+    "build": "babel src --out-dir lib",
+    "postbuild": "flow-copy-source -v src lib",
     "deploy": "yarn build && yarn publish"
   },
   "devDependencies": {
