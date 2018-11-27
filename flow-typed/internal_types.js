@@ -25,8 +25,7 @@ declare module '@internal/types' {
   }
 
   declare type UpdateSnapshotActn = { +key: string, +snap: FirestoreSnapshot }
-  declare type InitActn = { +key: '@@react-firebase-sub/INIT_SUBSCRIBER' }
-  declare type Dispatch = (a: UpdateSnapshotActn | InitActn) => void
+  declare type Dispatch = (a: UpdateSnapshotActn) => void
 
   declare type FirestoreSnapHandler = (snap: ?FirestoreSnapshot) => void
 

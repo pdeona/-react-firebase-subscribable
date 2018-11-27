@@ -16,7 +16,6 @@ import type {
  * Implement a basic observable ref snapshot store, to allow for dynamic ref
  * injection
  */
-const INIT_SUB = '@@react-firebase-sub/INIT_SUBSCRIBER'
 export default function createObservableRefMap(
   initialRefs: RefMap = {}
 ): ObservableRefMap {
@@ -26,12 +25,9 @@ export default function createObservableRefMap(
   let stateSubs: StateObserver[] = []
   let snapshotListeners: SnapshotListenerMap = {}
 
-  const dispatch: Dispatch = action => {
-    if (action.key !== INIT_SUB) {
-      const { key, snap } = action
-      const newState = Object.assign({}, snapshotState, { [key]: snap })
-      snapshotState = newState
-    }
+  const dispatch: Dispatch = ({ key, snap }) => {
+    const newState = Object.assign({}, snapshotState, { [key]: snap })
+    snapshotState = newState
     stateSubs.forEach(listener => {
       listener.observer()
     })
@@ -56,7 +52,7 @@ export default function createObservableRefMap(
   function subscribe(observer) {
     const subscription: StateObserver = { id: id++, observer } // eslint-disable-line no-plusplus
     stateSubs = stateSubs.concat(subscription)
-    dispatch({ key: INIT_SUB })
+    subscription.observer()
     return function unsubscribe() {
       stateSubs.splice(stateSubs.indexOf(subscription), 1)
       // tear down listeners if no subs left
@@ -113,7 +109,6 @@ export default function createObservableRefMap(
           }
         }
 
-        observe()
         const unsubscribe = subs(observe)
         return { unsubscribe }
       },

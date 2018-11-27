@@ -3,6 +3,13 @@ import {
   RequiredPropError,
 } from '../src/shared'
 
+describe('RequiredPropsError tests', () => {
+  test('it accepts a component name, prop name and message', () => {
+    const e = new RequiredPropError('test', 'prop', 'message')
+    expect(e.message).toEqual('test did not receive prop as a prop. message')
+  })
+})
+
 describe('diffRequiredProps tests', () => {
   const mockError = jest.fn()
   let oldConsole
