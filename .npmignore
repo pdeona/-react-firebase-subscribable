@@ -9,3 +9,4 @@ yarn.lock
 package-lock.json
 shrinkwrap.yaml
 .*rc
+coverage/
