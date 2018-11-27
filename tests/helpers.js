@@ -23,11 +23,9 @@ const mockCollection = jest.fn(collectionPath => ({
 
 mockDocument.parent = mockCollection
 
-const mockFirestore = {
-  firestore: jest.fn(() => ({
-    collection: mockCollection,
-  }))
-}
+const mockFirestore = () => ({
+  collection: mockCollection,
+})
 
 export {
   mockFirestore,

@@ -13,10 +13,11 @@ describe('createRefMap tests', () => {
   const subscribe = (emit, store = refMap) => () => {
     emit(store.getState())
   }
-  const ref = mockFirestore.firestore().collection('pants')
-    .doc('my-pants')
+  let ref
 
   beforeEach(() => {
+    ref = mockFirestore().collection('pants')
+      .doc('my-pants')
     refMap = createRefMap()
     unsubscribe = refMap.subscribe(subscribe(emitter))
   })
@@ -29,6 +30,24 @@ describe('createRefMap tests', () => {
     unsubscribe()
     const unsub = refMap.subscribe(subscribe(emitter))
     expect(emitter).toBeCalledWith({})
+    unsub()
+  })
+
+  test('it sends a state update on snapshot', () => {
+    unsubscribe()
+    const thisEmitter = jest.fn()
+    const unsub = refMap.subscribe(subscribe(thisEmitter))
+    expect(thisEmitter).toBeCalledWith({})
+    const onSnap = jest.fn(cb => {
+      cb(mockSnapshot)
+      return mockCleanup
+    })
+    const thisRef = {
+      onSnapshot: onSnap,
+    }
+    refMap.injectRef({ key: 'mockRef', ref: thisRef })
+    expect(onSnap).toBeCalledTimes(1)
+    expect(thisEmitter).toBeCalledWith({ mockRef: mockSnapshot })
     unsub()
   })
 
@@ -61,7 +80,7 @@ describe('createRefMap tests', () => {
     const thisEmitter = jest.fn(() => {
       lastState = refMap.getState()
     })
-    const thisRef = mockFirestore.firestore().collection('pants')
+    const thisRef = mockFirestore().collection('different-pants')
       .doc('my-pants')
     unsubscribe = refMap.subscribe(subscribe(thisEmitter))
     refMap.injectRef({ key: 'mockRef', ref: thisRef })
@@ -101,8 +120,13 @@ describe('createRefMap tests', () => {
   })
 
   test('it tears down all listeners when last subscriber unsubs', () => {
+    const cleanup = jest.fn()
+    const thisRef = () => ({
+      onSnapshot: () => cleanup,
+    })
+    refMap.injectRef({ key: 'mockRef', ref: thisRef() })
     unsubscribe()
-    expect(mockCleanup).toBeCalled()
+    expect(cleanup).toBeCalled()
   })
 
   test('listeners stay up on unsub if other subs exist', () => {
