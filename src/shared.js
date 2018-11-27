@@ -2,7 +2,7 @@
 
 const requiredPropErrorMsg = (componentName: string, propName: string, message: string): string => `${componentName} did not receive ${propName} as a prop. ${message}`
 
-class RequiredPropError extends Error {
+export class RequiredPropError extends Error {
   constructor(componentName, propName, message) {
     super(requiredPropErrorMsg(componentName, propName, message))
   }
@@ -54,6 +54,10 @@ export const diffRequiredProps = (
   })
   return errors
     .filter(e => !!e)
-  // $FlowFixMe filtered arrays aren't properly type-checked
-    .map(err => console.error(new RequiredPropError(...err)))
+    .map(err => {
+      // $FlowFixMe filtered arrays aren't properly type-checked
+      const e = new RequiredPropError(...err)
+      console.error(e)
+      return e
+    })
 }
