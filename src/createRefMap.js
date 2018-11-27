@@ -8,12 +8,15 @@ import type {
   StateObserver,
   Observer,
   Observable,
+  Dispatch,
+  UpdateSnapshotActn,
 } from '@internal/types'
 
 /**
  * Implement a basic observable ref snapshot store, to allow for dynamic ref
  * injection
  */
+const INIT_SUB = '@@react-firebase-sub/INIT_SUBSCRIBER'
 export default function createObservableRefMap(
   initialRefs: RefMap = {}
 ): ObservableRefMap {
@@ -23,9 +26,12 @@ export default function createObservableRefMap(
   let stateSubs: StateObserver[] = []
   let snapshotListeners: SnapshotListenerMap = {}
 
-  function dispatch({ key, snap }) {
-    const newState = Object.assign({}, snapshotState, { [key]: snap })
-    snapshotState = newState
+  const dispatch: Dispatch = action => {
+    if (action.key !== INIT_SUB) {
+      const { key, snap } = action
+      const newState = Object.assign({}, snapshotState, { [key]: snap })
+      snapshotState = newState
+    }
     stateSubs.forEach(listener => {
       listener.observer()
     })
@@ -50,8 +56,9 @@ export default function createObservableRefMap(
   function subscribe(observer) {
     const subscription: StateObserver = { id: id++, observer } // eslint-disable-line no-plusplus
     stateSubs = stateSubs.concat(subscription)
+    dispatch({ key: INIT_SUB })
     return function unsubscribe() {
-      stateSubs = stateSubs.splice(stateSubs.indexOf(subscription), 1)
+      stateSubs.splice(stateSubs.indexOf(subscription), 1)
       // tear down listeners if no subs left
       if (stateSubs.length === 0) {
         Object.keys(snapshotListeners).forEach(key => {
@@ -79,7 +86,8 @@ export default function createObservableRefMap(
      * but we have a snap stored
      */
     if (Reflect.has(snapshotState, key) && !ref) {
-      dispatch({ key, snap: null })
+      const action: UpdateSnapshotActn = { key, snap: null }
+      dispatch(action)
     }
     snapshotListeners = Object.assign(
       {},

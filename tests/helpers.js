@@ -1,41 +1,38 @@
-import React, { PureComponent } from 'react'
-import { withAuthSubscription, withFirestoreSubscription } from '../src'
-
-@withAuthSubscription
-class AuthSubscriber extends PureComponent {
-  render() {
-    const { user } = this.props
-    return user ? 'Signed in' : 'Not signed in'
-  }
-}
-
-@withFirestoreSubscription
-class DBSubscriber extends PureComponent {
-  render() {
-    const { name } = this.props
-    return name
-  }
-}
+const mockCleanup = jest.fn()
 
 const mockSnapshot = {
-  data: jest.fn(() => 'mock value')
+  data: jest.fn(() => 'mock value'),
 }
 
-const mockCollection = jest.fn(() => ({
-  onSnapshot(cb) {
+const mockDocument = jest.fn(() => ({
+  onSnapshot: jest.fn(cb => {
     cb(mockSnapshot)
+    setTimeout(cb(mockSnapshot), 50)
     return mockCleanup
-  },
+  }),
+  get: jest.fn(() => new Promise(res => res(mockSnapshot))),
 }))
+
+mockSnapshot.ref = mockDocument
+
+const mockCollection = jest.fn(collectionPath => ({
+  doc: mockDocument,
+  get: new Promise(res => res([mockDocument])),
+  path: collectionPath,
+}))
+
+mockDocument.parent = mockCollection
 
 const mockFirestore = {
   firestore: jest.fn(() => ({
-    collection: jest.fn
+    collection: mockCollection,
   }))
 }
 
 export {
-  AuthSubscriber,
-  DBSubscriber,
   mockFirestore,
+  mockCleanup,
+  mockDocument,
+  mockCollection,
+  mockSnapshot,
 }
