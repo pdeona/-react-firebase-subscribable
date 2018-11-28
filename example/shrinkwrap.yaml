@@ -39,7 +39,7 @@ dependencies:
   react-app-polyfill: 0.1.3
   react-dev-utils: 6.1.1
   react-dom: 16.6.3
-  react-firebase-subscribable: 'link:..'
+  react-firebase-subscribable: 1.0.17
   react-firebase-subscribable-example: 'link:'
   resolve: 1.8.1
   sass-loader: 7.1.0
@@ -4675,6 +4675,12 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-QLg82fGkfnJ/4iy1xZ81/9SIJiq1NGFUMGs6ParyjBZr6jW2Ufj/snDqTHixNlHdPNwN2RLVD0Pi3igeK9+JfA==
+  /hoist-non-react-statics/3.2.0:
+    dependencies:
+      react-is: 16.6.3
+    dev: false
+    resolution:
+      integrity: sha512-3IascCRfaEkbmHjJnUxWSspIUE1okLPjGTMVXW8zraUo1t3yg1BadKAxAGILHwgoBzmMnzrgeeaDGBvpuPz6dA==
   /home-or-tmp/2.0.0:
     dependencies:
       os-homedir: 1.0.2
@@ -8193,6 +8199,20 @@ packages:
     dev: false
     resolution:
       integrity: sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
+  /react-firebase-subscribable/1.0.17:
+    dependencies:
+      hoist-non-react-statics: 3.2.0
+      react: 16.6.3
+      symbol-observable: 1.2.0
+    dev: false
+    peerDependencies:
+      react-dom: ^16.6.0
+    resolution:
+      integrity: sha512-534XbMz78kwYmiNrW0929Hi4V98AxmQNZiGLtoQhPCQ8DfYTwJyI9cf9Or0uFFzFsiL6g3ETgSF42DGPvX015Q==
+  /react-is/16.6.3:
+    dev: false
+    resolution:
+      integrity: sha512-u7FDWtthB4rWibG/+mFbVd5FvdI20yde86qKGx4lVUTWmPlSWQ4QxbBIrrs+HnXGbxOUlUzTAP/VDmvCwaP2yA==
   /react/16.6.3:
     dependencies:
       loose-envify: 1.4.0
@@ -9282,6 +9302,12 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-GBkJbnTuFpM4jFbiERHDWhZc/S/kpHToqmZag3aEBjPYK44JAN2QBjvrGIxLOoCyMZjuFQIfTO2eJd8uwLY/9g==
+  /symbol-observable/1.2.0:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
   /symbol-tree/3.2.2:
     dev: false
     resolution:
@@ -10288,7 +10314,7 @@ specifiers:
   react-app-polyfill: ^0.1.3
   react-dev-utils: ^6.1.1
   react-dom: ^16.6.3
-  react-firebase-subscribable: 'link:..'
+  react-firebase-subscribable: ^1.0.17
   resolve: 1.8.1
   sass-loader: 7.1.0
   style-loader: 0.23.0
