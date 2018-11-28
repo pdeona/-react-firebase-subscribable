@@ -20,7 +20,7 @@
     "build": "rollup -c",
     "deploy": "yarn build && yarn publish",
     "test": "jest --coverage",
-    "test:circleci": "jest --json --outputFile=\"test-results/jest/results.json\"",
+    "test:circleci": "jest --ci --reporters=default --reporters=jest-junit --runInBand",
     "test:watch": "jest --watch"
   },
   "devDependencies": {
@@ -46,6 +46,7 @@
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "^0.86.0",
     "jest": "^23.6.0",
+    "jest-junit": "^5.2.0",
     "jest-pnp-resolver": "^1.0.2",
     "react-app-polyfill": "^0.1.3",
     "react-test-renderer": "^16.6.3",
