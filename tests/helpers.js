@@ -4,12 +4,12 @@ const mockSnapshot = {
   data: jest.fn(() => 'mock value'),
 }
 
-const mockDocument = jest.fn(() => ({
+const mockDocument = jest.fn(path => ({
   onSnapshot: jest.fn(cb => {
     cb(mockSnapshot)
-    setTimeout(cb(mockSnapshot), 50)
     return mockCleanup
   }),
+  path,
   get: jest.fn(() => new Promise(res => res(mockSnapshot))),
 }))
 

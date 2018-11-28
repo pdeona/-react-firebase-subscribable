@@ -2,7 +2,7 @@
 import React, { PureComponent, type ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import type { Auth } from 'firebase/auth'
-import type { AuthStateHandler } from '@internal/types'
+import type { AuthStateHandler } from 'react-firebase-subscribable'
 import { diffRequiredProps } from './shared'
 
 export type AuthSubscriberProps = {

@@ -1,6 +1,5 @@
 import React, { PureComponent, type ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import type { InjectedRef, SnapshotMap } from '@internal/types'
 import { FirestoreContext } from './FirestoreProvider'
 
 type MapFirestoreFn = (s: SnapshotMap) => ({ [key: string]: * })

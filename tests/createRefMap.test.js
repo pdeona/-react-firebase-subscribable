@@ -11,6 +11,7 @@ describe('createRefMap tests', () => {
   let refMap
   let unsubscribe
   let ref
+  const delayedCall = (fn, arg) => () => fn(arg)
   const subscribe = (emit, store = refMap) => () => {
     emit(store.getState())
   }
@@ -56,6 +57,17 @@ describe('createRefMap tests', () => {
     const unsub = thisRefMap.subscribe(subscribe(thisEmitter, thisRefMap))
     expect(thisEmitter).toBeCalledWith(thisRefMap.getState())
     unsub()
+  })
+
+  test('null initial refs dont do anything', () => {
+    expect(delayedCall(createRefMap, { mock: null })).not.toThrowError()
+  })
+
+  test('injectRef - key must be a string', () => {
+    expect(delayedCall(refMap.injectRef, { key: null })).toThrowError(TypeError)
+    expect(delayedCall(refMap.injectRef, { key: {} })).toThrowError(TypeError)
+    expect(delayedCall(refMap.injectRef, { key: () => {} })).toThrowError(TypeError)
+    expect(delayedCall(refMap.injectRef, { key: 1 })).toThrowError(TypeError)
   })
 
   test('it updates subscribers whenever a ref is injected', () => {
@@ -149,7 +161,6 @@ describe('createRefMap tests', () => {
 
   test('$observable throws typeerror if observer is not an object', () => {
     const observable = refMap[$observable]()
-    const delayedCall = (fn, arg) => () => fn(arg)
     expect(delayedCall(observable.subscribe, null)).toThrowError(TypeError)
     expect(delayedCall(observable.subscribe, v => v)).toThrowError(TypeError)
     expect(delayedCall(observable.subscribe, {})).not.toThrowError(TypeError)
