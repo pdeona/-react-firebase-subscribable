@@ -11,3 +11,5 @@ shrinkwrap.yaml
 coverage/
 lib/
 *.config.js
+.circleci/
+*ignore
