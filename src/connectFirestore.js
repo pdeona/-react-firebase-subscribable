@@ -5,6 +5,11 @@ import { FirestoreContext } from './FirestoreProvider'
 type MapFirestoreFn = (s: SnapshotMap) => ({ [key: string]: * })
 
 export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRef[]) => (WrappedComponent: ComponentType<*>) => {
+  /**
+   * allow ref injection without mapping snaps to props
+   */
+  const mapSnapshots = typeof mapSnapshotsToProps === 'function'
+    ? mapSnapshotsToProps : () => ({})
   class FirestoreConsumerHOC extends PureComponent {
     static displayName = `firestoreConnected${
       WrappedComponent.displayName || WrappedComponent.name
@@ -43,7 +48,7 @@ export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRe
       return (
         <FirestoreContext.Consumer>
           {({ snapshots: snaps }) => (
-            <WrappedComponent {...mapSnapshotsToProps(snaps)} {...this.props} />
+            <WrappedComponent {...mapSnapshots(snaps)} {...this.props} />
           )}
         </FirestoreContext.Consumer>
       )

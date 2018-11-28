@@ -33,7 +33,7 @@
 
 ### As Decorators
 
-All exports work with the ES7 decorator proposal syntax for class decorators:
+All HOC exports can be used as class decorators:
 
 ```js
 @withAuthSubscription
@@ -456,6 +456,11 @@ const CurrentUserProfile = ({ userProfile }) => (
 )
 
 // userProfile will be injected when this component connects
+/**
+ *  mapSnapshotsToProps can be null if you do not want the
+ *  component to receive snapshot updates, but still want to inject
+ *  refs.
+ **/
 const mapSnapshotsToProps = ({ userProfile }) => ({
   userProfile: userProfile ? userProfile.data() : null,
 })

@@ -6,6 +6,9 @@ import { AuthContext } from './AuthProvider'
 type MapAuthStateFn = (u: ?FirebaseUser) => ({ [key: string]: * })
 
 export default (mapAuthStateToProps: MapAuthStateFn) => (WrappedComponent: ComponentType<*>) => {
+  if (typeof mapAuthStateToProps !== 'function') {
+    throw new TypeError('[react-firebase-subscribable#connectAuth]: the first argument to connectAuth should be a function.')
+  }
   class AuthConsumerHOC extends PureComponent {
     static displayName = `authStateConnected${
       WrappedComponent.displayName || WrappedComponent.name
