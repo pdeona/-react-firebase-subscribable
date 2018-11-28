@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "babel src -o dist/react-firebase-subscribable.esm.js",
+    "build": "rollup -c",
     "deploy": "yarn build && yarn publish",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
