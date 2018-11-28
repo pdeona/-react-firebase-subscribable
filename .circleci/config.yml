@@ -17,7 +17,7 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: yarn install
+      - run: yarn add -D jest-junit
 
       - save_cache:
           paths:
@@ -25,9 +25,11 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn test:circleci
-      - store_test_results:
-          path: test-results
+      - run: 
+          name: Run test suites with reporters
+          command: yarn test:circleci
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
 
 workflows:
   version: 2
