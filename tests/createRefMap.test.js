@@ -7,15 +7,16 @@ import {
 import { createRefMap } from '../src'
 
 describe('createRefMap tests', () => {
-  const emitter = jest.fn()
+  let emitter
   let refMap
   let unsubscribe
+  let ref
   const subscribe = (emit, store = refMap) => () => {
     emit(store.getState())
   }
-  let ref
 
   beforeEach(() => {
+    emitter = jest.fn()
     ref = mockFirestore().collection('pants')
       .doc('my-pants')
     refMap = createRefMap()
@@ -27,17 +28,10 @@ describe('createRefMap tests', () => {
   })
 
   test('it sends a state update on subscription', () => {
-    unsubscribe()
-    const unsub = refMap.subscribe(subscribe(emitter))
     expect(emitter).toBeCalledWith({})
-    unsub()
   })
 
   test('it sends a state update on snapshot', () => {
-    unsubscribe()
-    const thisEmitter = jest.fn()
-    const unsub = refMap.subscribe(subscribe(thisEmitter))
-    expect(thisEmitter).toBeCalledWith({})
     const onSnap = jest.fn(cb => {
       cb(mockSnapshot)
       return mockCleanup
@@ -47,12 +41,10 @@ describe('createRefMap tests', () => {
     }
     refMap.injectRef({ key: 'mockRef', ref: thisRef })
     expect(onSnap).toBeCalledTimes(1)
-    expect(thisEmitter).toBeCalledWith({ mockRef: mockSnapshot })
-    unsub()
+    expect(emitter).toBeCalledWith({ mockRef: mockSnapshot })
   })
 
   test('it can be initialized with refs', () => {
-    unsubscribe()
     const thisRefMap = createRefMap({
       mockRef: ref,
     })
@@ -80,13 +72,11 @@ describe('createRefMap tests', () => {
     const thisEmitter = jest.fn(() => {
       lastState = refMap.getState()
     })
-    const thisRef = mockFirestore().collection('different-pants')
-      .doc('my-pants')
     unsubscribe = refMap.subscribe(subscribe(thisEmitter))
-    refMap.injectRef({ key: 'mockRef', ref: thisRef })
+    refMap.injectRef({ key: 'mockRef', ref })
     expect(lastState).toEqual({ mockRef: mockSnapshot })
-    refMap.injectRef({ key: 'mockRef', ref: thisRef })
-    expect(thisRef.onSnapshot).toBeCalledTimes(1)
+    refMap.injectRef({ key: 'mockRef', ref })
+    expect(ref.onSnapshot).toBeCalledTimes(1)
     expect(lastState).toEqual({ mockRef: mockSnapshot })
   })
 
@@ -130,7 +120,6 @@ describe('createRefMap tests', () => {
   })
 
   test('listeners stay up on unsub if other subs exist', () => {
-    unsubscribe()
     const cleanup = jest.fn()
     const thisEmitter = jest.fn()
     const thisRef = () => ({
@@ -142,10 +131,11 @@ describe('createRefMap tests', () => {
     unsub1()
     expect(cleanup).not.toBeCalled()
     unsub2()
+    unsubscribe()
+    expect(cleanup).toBeCalled()
   })
 
   test('it exposes an $observable interface', () => {
-    unsubscribe()
     const observable = refMap[$observable]()
     expect(observable.subscribe).toBeInstanceOf(Function)
     expect(observable[$observable]).toBeInstanceOf(Function)
@@ -158,7 +148,6 @@ describe('createRefMap tests', () => {
   })
 
   test('$observable throws typeerror if observer is not an object', () => {
-    unsubscribe()
     const observable = refMap[$observable]()
     const delayedCall = (fn, arg) => () => fn(arg)
     expect(delayedCall(observable.subscribe, null)).toThrowError(TypeError)

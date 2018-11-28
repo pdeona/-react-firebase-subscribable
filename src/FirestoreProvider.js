@@ -16,7 +16,7 @@ type FirestoreProviderState = {
   +injectRef: (key: string, ref: FirestoreReference) => void,
 }
 
-export const FirestoreContext = createContext<FirestoreProviderState>({
+export const FirestoreContext = createContext({
   snapshots: {},
   injectRef: () => {},
 })

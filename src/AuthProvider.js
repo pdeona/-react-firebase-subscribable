@@ -15,7 +15,7 @@ type AuthProviderState = {
   +user: ?FirebaseUser,
 }
 
-export const AuthContext = createContext<?FirebaseUser>(null)
+export const AuthContext = createContext(null)
 
 export default class FirebaseAuthProvider extends PureComponent<AuthProviderProps, AuthProviderState> {
   unsubscribe: ?() => void;

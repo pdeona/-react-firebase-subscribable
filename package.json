@@ -1,7 +1,9 @@
 {
   "name": "react-firebase-subscribable",
   "version": "1.0.15",
-  "main": "lib/index.js",
+  "main": "dist/react-firebase-subscribable.cjs.js",
+  "browser": "dist/react-firebase-subscribable.umd.js",
+  "module": "dist/react-firebase-subscribable.esm.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
   "repository": "github:pdeona/-react-firebase-subscribable",
@@ -14,10 +16,11 @@
     "subscriptions"
   ],
   "scripts": {
-    "prebuild": "rimraf lib",
-    "build": "babel src --out-dir lib",
-    "postbuild": "flow-copy-source -v src lib",
-    "deploy": "yarn build && yarn publish"
+    "prebuild": "rimraf dist",
+    "build": "babel src -o dist/react-firebase-subscribable.esm.js",
+    "deploy": "yarn build && yarn publish",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
@@ -29,7 +32,9 @@
     "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
+    "babel-helper-evaluate-path": "^0.5.0",
     "babel-jest": "^23.6.0",
+    "babel-preset-minify": "^0.5.0",
     "cpx": "^1.5.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
@@ -44,7 +49,13 @@
     "jest-pnp-resolver": "^1.0.2",
     "react-app-polyfill": "^0.1.3",
     "react-test-renderer": "^16.6.3",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "rollup": "^0.67.3",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-flow": "^1.1.1",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-uglify": "^6.0.0"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.1.0",
