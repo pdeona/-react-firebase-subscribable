@@ -13,7 +13,12 @@ export default [
     output: {
       name: 'ReactFirebaseSubscribable',
       file: pkg.browser,
-      format: 'umd'
+      format: 'umd',
+      globals: {
+        'symbol-observable': "Symbol.observable",
+        react: 'React',
+        'hoist-non-react-statics': 'hoistNonReactStatics',
+      },
     },
     plugins: [
       flow(),
