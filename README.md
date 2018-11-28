@@ -1,6 +1,10 @@
-# react-firebase-subscribable
+# 🔥 react-firebase-subscribable 🔥
 
-Higher order components to wrap React Components in Firebase Auth/Firestore real-time subscriptions.
+![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react-firebase-subscribable.svg)
+
+![npm (tag)](https://img.shields.io/npm/v/react-firebase-subscribable/latest.svg)
+
+`react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
 
 ## Table of Contents
 
@@ -35,6 +39,8 @@ All exports work with the ES7 decorator proposal syntax for class decorators:
 @withAuthSubscription
 @withFirestoreSubscription
 @withRTDBSubscription
+@connectAuth(mapAuthStateToProps)
+@connectFirestore(mapSnapshotsToProps, ...injectedRefs)
 ```
 
 To enable support in your app, you need to add `@babel/plugin-proposal-decorators` to your project and add the following to your `.babelrc`:
@@ -383,7 +389,7 @@ Props:
 | ----------- |:--------------------------------------------:| --------:|
 | refMap      | returned from `createRefMap`                 | true     |
 
-`refMap` should be an object whose keys are strings and whose values are either null or a firestore `Reference`.
+`refMap` is the return value of calling `createRefMap` with an optional `initialRefMap`
 
 ```js
 // in root component
