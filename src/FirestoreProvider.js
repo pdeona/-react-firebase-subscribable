@@ -4,10 +4,9 @@ import type {
   FirestoreReference,
   FirestoreProviderProps,
   FirestoreProviderState,
-  FirestoreCtx,
 } from 'react-firebase-subscribable'
 
-export const FirestoreContext = createContext<FirestoreCtx>({
+export const FirestoreContext = createContext({
   snapshots: {},
   injectRef: () => {},
 })

@@ -5,11 +5,10 @@ import type {
   AuthStateHandler,
   AuthProviderProps,
   AuthProviderState,
-  AuthCtx,
 } from 'react-firebase-subscribable'
 import { diffRequiredProps } from './shared'
 
-export const AuthContext = createContext<AuthCtx>(null)
+export const AuthContext = createContext(null)
 
 export default class FirebaseAuthProvider extends PureComponent<AuthProviderProps, AuthProviderState> {
   unsubscribe: ?() => void;
