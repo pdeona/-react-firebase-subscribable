@@ -7,16 +7,19 @@ import {
 import { createRefMap } from '../src'
 
 describe('createRefMap tests', () => {
-  const emitter = jest.fn()
+  let emitter
   let refMap
   let unsubscribe
+  let ref
+  const delayedCall = (fn, arg) => () => fn(arg)
   const subscribe = (emit, store = refMap) => () => {
     emit(store.getState())
   }
-  const ref = mockFirestore.firestore().collection('pants')
-    .doc('my-pants')
 
   beforeEach(() => {
+    emitter = jest.fn()
+    ref = mockFirestore().collection('pants')
+      .doc('my-pants')
     refMap = createRefMap()
     unsubscribe = refMap.subscribe(subscribe(emitter))
   })
@@ -26,14 +29,23 @@ describe('createRefMap tests', () => {
   })
 
   test('it sends a state update on subscription', () => {
-    unsubscribe()
-    const unsub = refMap.subscribe(subscribe(emitter))
     expect(emitter).toBeCalledWith({})
-    unsub()
+  })
+
+  test('it sends a state update on snapshot', () => {
+    const onSnap = jest.fn(cb => {
+      cb(mockSnapshot)
+      return mockCleanup
+    })
+    const thisRef = {
+      onSnapshot: onSnap,
+    }
+    refMap.injectRef({ key: 'mockRef', ref: thisRef })
+    expect(onSnap).toBeCalledTimes(1)
+    expect(emitter).toBeCalledWith({ mockRef: mockSnapshot })
   })
 
   test('it can be initialized with refs', () => {
-    unsubscribe()
     const thisRefMap = createRefMap({
       mockRef: ref,
     })
@@ -45,6 +57,17 @@ describe('createRefMap tests', () => {
     const unsub = thisRefMap.subscribe(subscribe(thisEmitter, thisRefMap))
     expect(thisEmitter).toBeCalledWith(thisRefMap.getState())
     unsub()
+  })
+
+  test('null initial refs dont do anything', () => {
+    expect(delayedCall(createRefMap, { mock: null })).not.toThrowError()
+  })
+
+  test('injectRef - key must be a string', () => {
+    expect(delayedCall(refMap.injectRef, { key: null })).toThrowError(TypeError)
+    expect(delayedCall(refMap.injectRef, { key: {} })).toThrowError(TypeError)
+    expect(delayedCall(refMap.injectRef, { key: () => {} })).toThrowError(TypeError)
+    expect(delayedCall(refMap.injectRef, { key: 1 })).toThrowError(TypeError)
   })
 
   test('it updates subscribers whenever a ref is injected', () => {
@@ -61,13 +84,11 @@ describe('createRefMap tests', () => {
     const thisEmitter = jest.fn(() => {
       lastState = refMap.getState()
     })
-    const thisRef = mockFirestore.firestore().collection('pants')
-      .doc('my-pants')
     unsubscribe = refMap.subscribe(subscribe(thisEmitter))
-    refMap.injectRef({ key: 'mockRef', ref: thisRef })
+    refMap.injectRef({ key: 'mockRef', ref })
     expect(lastState).toEqual({ mockRef: mockSnapshot })
-    refMap.injectRef({ key: 'mockRef', ref: thisRef })
-    expect(thisRef.onSnapshot).toBeCalledTimes(1)
+    refMap.injectRef({ key: 'mockRef', ref })
+    expect(ref.onSnapshot).toBeCalledTimes(1)
     expect(lastState).toEqual({ mockRef: mockSnapshot })
   })
 
@@ -101,12 +122,16 @@ describe('createRefMap tests', () => {
   })
 
   test('it tears down all listeners when last subscriber unsubs', () => {
+    const cleanup = jest.fn()
+    const thisRef = () => ({
+      onSnapshot: () => cleanup,
+    })
+    refMap.injectRef({ key: 'mockRef', ref: thisRef() })
     unsubscribe()
-    expect(mockCleanup).toBeCalled()
+    expect(cleanup).toBeCalled()
   })
 
   test('listeners stay up on unsub if other subs exist', () => {
-    unsubscribe()
     const cleanup = jest.fn()
     const thisEmitter = jest.fn()
     const thisRef = () => ({
@@ -118,10 +143,11 @@ describe('createRefMap tests', () => {
     unsub1()
     expect(cleanup).not.toBeCalled()
     unsub2()
+    unsubscribe()
+    expect(cleanup).toBeCalled()
   })
 
   test('it exposes an $observable interface', () => {
-    unsubscribe()
     const observable = refMap[$observable]()
     expect(observable.subscribe).toBeInstanceOf(Function)
     expect(observable[$observable]).toBeInstanceOf(Function)
@@ -134,9 +160,7 @@ describe('createRefMap tests', () => {
   })
 
   test('$observable throws typeerror if observer is not an object', () => {
-    unsubscribe()
     const observable = refMap[$observable]()
-    const delayedCall = (fn, arg) => () => fn(arg)
     expect(delayedCall(observable.subscribe, null)).toThrowError(TypeError)
     expect(delayedCall(observable.subscribe, v => v)).toThrowError(TypeError)
     expect(delayedCall(observable.subscribe, {})).not.toThrowError(TypeError)

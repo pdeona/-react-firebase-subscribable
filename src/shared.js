@@ -1,36 +1,19 @@
 // @flow
+import type {
+  RequiredPropSpec,
+} from 'react-firebase-subscribable'
 
 const requiredPropErrorMsg = (componentName: string, propName: string, message: string): string => `${componentName} did not receive ${propName} as a prop. ${message}`
 
-class RequiredPropError extends Error {
-  constructor(componentName, propName, message) {
+export class RequiredPropError extends Error {
+  constructor(componentName: string, propName: string, message: string) {
     super(requiredPropErrorMsg(componentName, propName, message))
   }
 }
 
-type TypeofTypes = 'string'
-  | 'function'
-  | 'number'
-  | 'object'
-  | 'boolean'
-  | 'undefined'
-
-type RequiredPropWithStdType = $Exact<{
-  propName: string,
-  propType: TypeofTypes,
-}>
-
-type RequiredPropWithPredicate = $Exact<{
-  propName: string,
-  predicate: (prop: *) => boolean,
-  message: string,
-}>
-
-type RequiredPropSpec = RequiredPropWithStdType | RequiredPropWithPredicate
-
 export const diffRequiredProps = (
   componentName: string,
-  props: *,
+  props: { +[key: string]: * },
   ...requiredProps: RequiredPropSpec[]
 ): RequiredPropError[] => {
   const errors: Array<string[] | null> = requiredProps.map((spec: RequiredPropSpec): string[] | null => {
@@ -54,6 +37,10 @@ export const diffRequiredProps = (
   })
   return errors
     .filter(e => !!e)
-  // $FlowFixMe filtered arrays aren't properly type-checked
-    .map(err => console.error(new RequiredPropError(...err)))
+    .map(err => {
+      // $FlowFixMe filtered arrays aren't properly type-checked
+      const e = new RequiredPropError(...err)
+      console.error(e)
+      return e
+    })
 }

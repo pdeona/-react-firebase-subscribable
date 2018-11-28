@@ -1,32 +1,18 @@
 // @flow
-import React, { createContext, PureComponent, type Node } from 'react'
+import React, { createContext, PureComponent } from 'react'
 import type {
-  ObservableRefMap,
   FirestoreReference,
-  SnapshotMap,
-} from '@internal/types'
+  FirestoreProviderProps,
+  FirestoreProviderState,
+} from 'react-firebase-subscribable'
 
-type FirestoreProviderProps = {
-  +refMap: ObservableRefMap,
-  +children: Node,
-}
-
-type FirestoreProviderState = {
-  +snapshots: SnapshotMap,
-  +injectRef: (key: string, ref: FirestoreReference) => void,
-}
-
-export const FirestoreContext = createContext<FirestoreProviderState>({
+export const FirestoreContext = createContext({
   snapshots: {},
   injectRef: () => {},
 })
 
 export default class FirestoreProvider extends PureComponent<FirestoreProviderProps, FirestoreProviderState> {
   mounted: boolean;
-
-  listeners: {
-    [key: string]: ?(() => void),
-  };
 
   unsubscribe: () => void;
 

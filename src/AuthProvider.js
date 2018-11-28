@@ -1,21 +1,14 @@
 // @flow
 import React, { createContext, PureComponent, type Node } from 'react'
-import type { FirebaseUser } from 'firebase/app'
 import type { Auth } from 'firebase/auth'
-import type { AuthStateHandler } from '@internal/types'
+import type {
+  AuthStateHandler,
+  AuthProviderProps,
+  AuthProviderState,
+} from 'react-firebase-subscribable'
 import { diffRequiredProps } from './shared'
 
-type AuthProviderProps = {
-  +firebaseAuth: Auth,
-  +onAuthStateChanged?: AuthStateHandler,
-  +children: Node,
-}
-
-type AuthProviderState = {
-  +user: ?FirebaseUser,
-}
-
-export const AuthContext = createContext<?FirebaseUser>(null)
+export const AuthContext = createContext(null)
 
 export default class FirebaseAuthProvider extends PureComponent<AuthProviderProps, AuthProviderState> {
   unsubscribe: ?() => void;
@@ -39,7 +32,7 @@ export default class FirebaseAuthProvider extends PureComponent<AuthProviderProp
         this.props,
         {
           propName: 'firebaseAuth',
-          predicate: prop => (prop
+          predicate: (prop: ?Auth) => (!!prop
             && typeof prop.onAuthStateChanged === 'function'),
           message: 'firebaseAuth is required and should be a firebase app auth instance.',
         },
@@ -60,7 +53,7 @@ export default class FirebaseAuthProvider extends PureComponent<AuthProviderProp
     if (this.unsubscribe) this.unsubscribe()
   }
 
-  render() {
+  render(): Node {
     const { children } = this.props
     const { user } = this.state
     return (

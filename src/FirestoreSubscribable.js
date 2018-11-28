@@ -4,7 +4,7 @@ import hoistNonReactStatics from 'hoist-non-react-statics'
 import type {
   FirestoreReference,
   FirestoreSnapHandler,
-} from '@internal/types'
+} from 'react-firebase-subscribable'
 import { diffRequiredProps } from './shared'
 
 export type FirestoreSubProps = {

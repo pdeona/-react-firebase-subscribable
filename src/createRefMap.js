@@ -8,17 +8,17 @@ import type {
   StateObserver,
   Observer,
   Observable,
-  Dispatch,
   UpdateSnapshotActn,
-} from '@internal/types'
+  FirestoreSnapshot,
+  FirestoreSnapHandler,
+} from 'react-firebase-subscribable'
 
 /**
  * Implement a basic observable ref snapshot store, to allow for dynamic ref
  * injection
  */
-const INIT_SUB = '@@react-firebase-sub/INIT_SUBSCRIBER'
 export default function createObservableRefMap(
-  initialRefs: RefMap = {}
+  initialRefs: RefMap = {},
 ): ObservableRefMap {
   let id = 0
   let currentRefs: RefMap = initialRefs
@@ -26,15 +26,30 @@ export default function createObservableRefMap(
   let stateSubs: StateObserver[] = []
   let snapshotListeners: SnapshotListenerMap = {}
 
-  const dispatch: Dispatch = action => {
-    if (action.key !== INIT_SUB) {
-      const { key, snap } = action
-      const newState = Object.assign({}, snapshotState, { [key]: snap })
-      snapshotState = newState
-    }
+  function dispatch({ key, snap }: UpdateSnapshotActn): void {
+    const newState: SnapshotMap = Object.assign({}, snapshotState, { [key]: snap })
+    snapshotState = newState
     stateSubs.forEach(listener => {
       listener.observer()
     })
+  }
+
+  function dispatchSnapshotUpdate(key: string): FirestoreSnapHandler {
+    return function onSnap(snapshot: ?FirestoreSnapshot) {
+      const action: UpdateSnapshotActn = { key, snap: snapshot }
+      dispatch(action)
+    }
+  }
+
+  function reduceInitialRefs(refs) {
+    return (acc: SnapshotListenerMap, key: string) => {
+      const ref = refs[key]
+      const onSnapshot = dispatchSnapshotUpdate(key)
+      return (ref
+        ? Object.assign(acc, {
+          [key]: ref.onSnapshot(onSnapshot),
+        }) : acc)
+    }
   }
 
   function unsub(unsubscribe: ?() => void) {
@@ -44,10 +59,7 @@ export default function createObservableRefMap(
   }
 
   snapshotListeners = Object.keys(initialRefs)
-    .reduce((acc, key) => Object.assign(acc, {
-      [key]: initialRefs[key]
-        && initialRefs[key].onSnapshot(snap => dispatch({ key, snap })),
-    }), {})
+    .reduce(reduceInitialRefs(initialRefs), {})
 
   function getState() {
     return snapshotState
@@ -56,7 +68,7 @@ export default function createObservableRefMap(
   function subscribe(observer) {
     const subscription: StateObserver = { id: id++, observer } // eslint-disable-line no-plusplus
     stateSubs = stateSubs.concat(subscription)
-    dispatch({ key: INIT_SUB })
+    subscription.observer()
     return function unsubscribe() {
       stateSubs.splice(stateSubs.indexOf(subscription), 1)
       // tear down listeners if no subs left
@@ -70,6 +82,9 @@ export default function createObservableRefMap(
   }
 
   function injectRef({ key, ref }) {
+    if (!key || typeof key !== 'string') {
+      throw new TypeError('injectRef: "key" argument should be a string')
+    }
     if (Reflect.has(currentRefs, key) && currentRefs[key] === ref) {
       return
     }
@@ -89,11 +104,19 @@ export default function createObservableRefMap(
       const action: UpdateSnapshotActn = { key, snap: null }
       dispatch(action)
     }
-    snapshotListeners = Object.assign(
-      {},
-      snapshotListeners,
-      { [key]: ref && ref.onSnapshot(snap => dispatch({ key, snap })) },
-    )
+    if (!ref) {
+      snapshotListeners = Object.assign(
+        {},
+        snapshotListeners,
+        { [key]: null },
+      )
+    } else {
+      snapshotListeners = Object.assign(
+        {},
+        snapshotListeners,
+        { [key]: ref.onSnapshot(dispatchSnapshotUpdate(key)) },
+      )
+    }
   }
 
   /**
@@ -113,7 +136,6 @@ export default function createObservableRefMap(
           }
         }
 
-        observe()
         const unsubscribe = subs(observe)
         return { unsubscribe }
       },
