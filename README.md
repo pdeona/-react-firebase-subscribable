@@ -1,6 +1,6 @@
 # 🔥 react-firebase-subscribable 🔥
 
-[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react.svg)](https://www.npmjs.com/package/react-firebase-subscribable)
+[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react-firebase-subscribable.svg)](https://bundlephobia.com/result?p=react-firebase-subscribable@latest)
 
 [![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg)](https://circleci.com/gh/pdeona/-react-firebase-subscribable)
 
