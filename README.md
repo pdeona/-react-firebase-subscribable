@@ -1,14 +1,16 @@
 # 🔥 react-firebase-subscribable 🔥
 
-[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react.svg)](https://www.npmjs.com/package/react-firebase-subscribable)
+[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react-firebase-subscribable.svg)](https://bundlephobia.com/result?p=react-firebase-subscribable@latest)
 
 [![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg)](https://circleci.com/gh/pdeona/-react-firebase-subscribable)
 
 [![GitHub issues](https://img.shields.io/github/issues-raw/pdeona/-react-firebase-subscribable.svg)](https://github.com/pdeona/-react-firebase-subscribable)
 
-`react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
+`react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions.
 
 ## Table of Contents
+
+[Installation](#installation)
 
 [Usage](#usage)
 
@@ -30,6 +32,27 @@
 [Dependencies](#dependencies)
 
 [Bugs, Pull Requests](#bugs-pull-requests)
+
+## Installation
+
+This package is hosted on `npm`. To add it to your node project, use:
+
+```bash
+npm i -S react-firebase-subscribable
+# with yarn
+yarn add react-firebase-subscribable
+```
+
+A UMD build is also available for browsers via `unpkg`:
+
+```html
+<script
+  src="https://unpkg.com/react-firebase-subscribable@1.0.21/dist/react-firebase-subscribable.umd.js"
+>
+</script>
+```
+
+Note: you will need load the [dependencies](#dependencies) before this tag to use this library
 
 ## Usage
 
@@ -413,11 +436,13 @@ export default FirestoreConnectedRoot
 
 #### connectFirestore
 
-A function that accepts a function `mapSnapshotsToProps` and a list of `injectedRefs` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
+A function that accepts a function `mapSnapshotsToProps` and a list of `...injectedRefs` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
 
 ##### mapSnapshotsToProps
 
 `mapSnapshotsToProps` will receive the current `refMap`'s corresponding snapshots as values in an object with the same keys:
+
+Note: `mapSnapshotsToProps` can be null if you want to injectRefs without subscribing the component to their snapshots.
 
 ```js
 // in consumer components
@@ -442,7 +467,11 @@ export default connectFirestore(mapSnapshotsToProps)(CurrentUserProfile)
 
 ##### injectedRefs
 
-`...injectedRefs` can be passed into any firestore-connected component, and should have the form { key: string, ref: (Firestore Reference | Function) }. if the provided ref is a function it will be called with the component's props:
+`...injectedRefs` can be passed into any firestore-connected component, and should have the form:
+
+`{ key: string, ref: (Firestore Reference | Function) }`
+
+if the provided ref is a function it will be called with the component's props:
 
 ```js
 import React from 'react'
@@ -490,13 +519,13 @@ export default withFirestoreState(CurrentUserProfile)
 
 ## Dependencies
 
-- `react` `^16.6.0`
 - `symbol-observable` `^1.2.0`
 - `hoist-non-react-statics` `^3.1.0`
 
 ### Peer Dependencies
 
-- `react-dom` `^16.6.0`
+- `react` `^16.3.0`
+- `react-dom` `^16.3.0`
 
 ## Bugs, Pull Requests
 
