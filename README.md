@@ -10,6 +10,8 @@
 
 ## Table of Contents
 
+[Installation](#installation)
+
 [Usage](#usage)
 
 - [As Decorators](#as-decorators)
@@ -30,6 +32,27 @@
 [Dependencies](#dependencies)
 
 [Bugs, Pull Requests](#bugs-pull-requests)
+
+## Installation
+
+This package is hosted on `npm`. To add it to your node project, use:
+
+```bash
+npm i -S react-firebase-subscribable
+# with yarn
+yarn add react-firebase-subscribable
+```
+
+A UMD build is also available for browsers via `unpkg`:
+
+```html
+<script
+  src="https://unpkg.com/react-firebase-subscribable@1.0.21/dist/react-firebase-subscribable.umd.js"
+>
+</script>
+```
+
+Note: you will need load the [dependencies](#dependencies) before this tag to use this library
 
 ## Usage
 
