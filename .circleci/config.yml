@@ -18,7 +18,8 @@ jobs:
           - v1-dependencies-
 
       - run: yarn add -D jest-junit
-
+      - run: mkdir -p "reports/jest"
+      - run: touch "reports/jest/results.json"
       - save_cache:
           paths:
             - node_modules
