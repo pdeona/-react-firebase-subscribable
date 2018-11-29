@@ -4,6 +4,8 @@
 
 ![npm (tag)](https://img.shields.io/npm/v/react-firebase-subscribable/latest.svg)
 
+![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg?logo=circleci)
+
 `react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
 
 ## Table of Contents
