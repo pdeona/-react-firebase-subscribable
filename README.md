@@ -1,10 +1,10 @@
 # 🔥 react-firebase-subscribable 🔥
 
-![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react-firebase-subscribable.svg)
+[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react.svg)](https://www.npmjs.com/package/react-firebase-subscribable)
 
-![npm (tag)](https://img.shields.io/npm/v/react-firebase-subscribable/latest.svg)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg)](https://circleci.com/gh/pdeona/-react-firebase-subscribable)
 
-![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg?logo=circleci)
+[![GitHub issues](https://img.shields.io/github/issues-raw/pdeona/-react-firebase-subscribable.svg)](https://github.com/pdeona/-react-firebase-subscribable)
 
 `react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
 
@@ -291,7 +291,7 @@ export default class App extends PureComponent {
 
 ### Context API
 
-`react-firebase-subscribable` exports `Provider` components and `connect` functions for using Auth/Firestore state via the context API. The api is modeled after Redux's with a few modifications to allow for different use cases. As with the above HOC's, auth state is separated from database subscriptions so the module exports separate Provider/connect functions for each:
+`react-firebase-subscribable` exports `Provider` components and `connect` functions for using Auth/Firestore state via the context API. The API is modeled after `redux` with individual components being wrapped in a context consumer and passed the desired state fields. As with the above HOC's, auth state is separated from database subscriptions so the module exports separate Provider/connect functions for each:
 
 ### Auth
 
