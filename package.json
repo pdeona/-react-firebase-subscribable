@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "main": "dist/react-firebase-subscribable.cjs.js",
   "browser": "dist/react-firebase-subscribable.umd.js",
   "module": "dist/react-firebase-subscribable.esm.js",
