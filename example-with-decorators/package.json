@@ -1,9 +1,10 @@
 {
-  "name": "react-firebase-subscribable-example-base",
+  "name": "react-firebase-subscribable-example-decorators",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@babel/core": "7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.1.6",
     "@svgr/webpack": "2.4.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
@@ -25,7 +26,6 @@
     "eslint-plugin-jsx-a11y": "6.1.2",
     "eslint-plugin-react": "7.11.1",
     "file-loader": "2.0.0",
-    "firebase": "^5.5.8",
     "fork-ts-checker-webpack-plugin-alt": "0.4.14",
     "fs-extra": "7.0.0",
     "html-webpack-plugin": "4.0.0-alpha.2",
@@ -33,7 +33,6 @@
     "jest": "23.6.0",
     "jest-pnp-resolver": "1.0.1",
     "jest-resolve": "23.6.0",
-    "lodash": "^4.17.11",
     "mini-css-extract-plugin": "0.4.3",
     "optimize-css-assets-webpack-plugin": "5.0.1",
     "pnp-webpack-plugin": "1.1.0",
@@ -41,11 +40,11 @@
     "postcss-loader": "3.0.0",
     "postcss-preset-env": "6.0.6",
     "postcss-safe-parser": "4.0.1",
-    "react": "^16.7.0-alpha.2",
+    "react": "^16.6.3",
     "react-app-polyfill": "^0.1.3",
     "react-dev-utils": "^6.1.1",
-    "react-dom": "^16.7.0-alpha.2",
-    "react-firebase-subscribable": "^1.0.0-alpha.0",
+    "react-dom": "^16.6.3",
+    "react-firebase-subscribable": "link:..",
     "resolve": "1.8.1",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.0",
@@ -70,6 +69,10 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "devDependencies": {
+    "firebase": "^5.5.8",
+    "lodash": "^4.17.11"
+  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
@@ -114,6 +117,14 @@
   "babel": {
     "presets": [
       "react-app"
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ]
     ]
   }
 }

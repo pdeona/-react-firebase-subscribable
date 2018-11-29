@@ -1,8 +1,0 @@
-#! /bin/bash
-
-DIST="./dist"
-SRC="./src"
-
-for file in $(ls $SRC); do
-  cp "$SRC/$file" "$DIST/$file.flow"
-done
