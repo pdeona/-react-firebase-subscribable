@@ -513,12 +513,13 @@ export default withFirestoreState(CurrentUserProfile)
 
 ## Dependencies
 
-### Peer Dependencies
-
-- `react` `^16.6.0`
 - `symbol-observable` `^1.2.0`
 - `hoist-non-react-statics` `^3.1.0`
-- `react-dom` `^16.6.0`
+
+### Peer Dependencies
+
+- `react` `^16.3.0`
+- `react-dom` `^16.3.0`
 
 ## Bugs, Pull Requests
 
