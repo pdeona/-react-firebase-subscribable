@@ -1,7 +1,15 @@
-example/
+*example*/
 src/
 yarn-error.log
 tests/
 flow-typed/
-lib/
 .flowconfig
+yarn.lock
+package-lock.json
+shrinkwrap.yaml
+.*rc
+coverage/
+lib/
+*.config.js
+.circleci/
+*ignore

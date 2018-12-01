@@ -1,6 +1,5 @@
 [ignore]
-./dist
-./example
+./example*
 
 [include]
 
