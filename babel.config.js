@@ -10,8 +10,8 @@ module.exports = {
     test: {
       presets: [
         '@babel/preset-flow',
-        ['@babel/preset-env', { modules: 'commonjs' }],
         '@babel/preset-react',
+        ['@babel/preset-env', { modules: 'commonjs' }],
       ]
     }
   }
