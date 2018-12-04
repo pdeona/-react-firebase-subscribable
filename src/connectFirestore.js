@@ -10,6 +10,10 @@ export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRe
    */
   const mapSnapshots = typeof mapSnapshotsToProps === 'function'
     ? mapSnapshotsToProps : () => ({})
+  /**
+   * store for memoized props
+   */
+  const memoized = {}
   class FirestoreConsumerHOC extends PureComponent {
     static displayName = `firestoreConnected${
       WrappedComponent.displayName || WrappedComponent.name
@@ -17,8 +21,23 @@ export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRe
 
     static contextType = FirestoreContext
 
-    injectRef = ({ key, ref }) => {
+    updateMemoized = memoizedProps => {
+      memoizedProps.forEach(propName => {
+        const { [propName]: prop } = this.props
+        memoized[propName] = prop
+      })
+    }
+
+    injectRef = ({ key, ref, memoizedProps }) => {
       const { injectRef } = this.context
+      if (memoizedProps.length) {
+        const changed = memoizedProps.find(propName => {
+          const { [propName]: prop } = this.props
+          return memoized[propName] !== prop
+        })
+        this.updateMemoized(memoizedProps)
+        if (!changed) return
+      }
       if (typeof ref === 'function') injectRef(key, ref(this.props))
       else injectRef(key, ref)
     }
@@ -28,8 +47,8 @@ export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRe
       injectRef(key, null)
     }
 
-    updateInjected = ({ key, ref }) => {
-      if (typeof ref === 'function') this.injectRef({ key, ref })
+    updateInjected = injectedRef => {
+      if (typeof injectedRef.ref === 'function') this.injectRef(injectedRef)
     }
 
     componentDidMount() {

@@ -54,6 +54,7 @@ declare module 'react-firebase-subscribable' {
   declare export type InjectedRef = {
     +key: string,
     +ref: ?FirestoreReference,
+    +memoizeProps: string[],
   }
 
   declare export type RefMap = {
