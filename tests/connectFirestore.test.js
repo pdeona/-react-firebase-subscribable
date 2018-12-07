@@ -76,8 +76,6 @@ describe('connectFirestore tests', () => {
     app = mount(
       <App user={user} />
     )
-    const wrapper = app.find(App)
-    const node = wrapper.find(Dummy).get(0)
     expect(mock).toBeCalledTimes(1)
     app.setProps({ user: { id: 1 } })
     expect(mock).toBeCalledTimes(1)
