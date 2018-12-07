@@ -28,7 +28,7 @@ export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRe
       })
     }
 
-    injectRef = ({ key, ref, memoizedProps }) => {
+    injectRef = ({ key, ref, memoizedProps = [] }) => {
       const { injectRef } = this.context
       if (memoizedProps.length) {
         const changed = memoizedProps.find(propName => {

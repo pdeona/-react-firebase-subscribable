@@ -20,8 +20,8 @@ describe('connectFirestore tests', () => {
     return (<div></div>)
   }
 
-  const mockRef = () => mockFirestore().collection('pants')
-    .doc('my-pants')
+  const mockRef = (docID = 'my-pants') => mockFirestore().collection('pants')
+    .doc(docID)
 
   test('it maps snapshots to props', () => {
     const Connected = connectFirestore(s => s)(Dummy)
@@ -43,5 +43,39 @@ describe('connectFirestore tests', () => {
     )
     const node = app.find(Connected).find(Dummy).get(0)
     expect(node.props).toEqual({})
+  })
+
+  test('it injects refs into the store', () => {
+    const Connected = connectFirestore(snaps => snaps, {
+      key: 'mock',
+      ref: ({ user }) => mockRef(user.id),
+    })(Dummy)
+    app = mount(
+      <Root refMap={createRefMap()}>
+        <Connected user={{ id: 1 }} />
+      </Root>
+    )
+    const node = app.find(Connected).find(Dummy).get(0)
+    expect(node.props).toEqual({ mock: mockSnapshot, user: { id: 1 } })
+  })
+
+  test('it memoizes props when specified', () => {
+    const mockRefFn = jest.fn(id => mockRef(id))
+    const Connected = connectFirestore(snaps => snaps, {
+      key: 'mock',
+      ref: mockRefFn,
+      memoizedProps: ['user'],
+    })(Dummy)
+    const user = { id: 1 }
+    app = mount(
+      <Root refMap={createRefMap()}>
+        <Connected user={user} />
+      </Root>
+    )
+    expect(mockRefFn).toBeCalledTimes(1)
+    user.id = 1
+    expect(mockRefFn).toBeCalledTimes(1)
+    const node = app.find(Connected).find(Dummy).get(0)
+    expect(node.props).toEqual({ mock: mockSnapshot, user: { id: 1 } })
   })
 })
