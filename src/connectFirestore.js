@@ -1,5 +1,6 @@
 import React, { PureComponent, type ComponentType } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
+import { shallowEqual } from './shared'
 import { FirestoreContext } from './FirestoreProvider'
 
 type MapFirestoreFn = (s: SnapshotMap) => ({ [key: string]: * })
@@ -33,7 +34,7 @@ export default (mapSnapshotsToProps: MapFirestoreFn, ...injectedRefs: InjectedRe
       if (memoizedProps.length) {
         const changed = memoizedProps.find(propName => {
           const { [propName]: prop } = this.props
-          return memoized[propName] !== prop
+          return !shallowEqual(prop, memoized[propName])
         })
         this.updateMemoized(memoizedProps)
         if (!changed) return

@@ -45,7 +45,7 @@ export const diffRequiredProps = (
     })
 }
 
-const shallowEqual = (a: any, b: any): boolean => {
+export const shallowEqual = (a: any, b: any): boolean => {
   if (a === b) {
     return true
   }
@@ -65,20 +65,4 @@ const shallowEqual = (a: any, b: any): boolean => {
     }
   }
   return true
-}
-
-export const memoize = (fn: Function): Function => {
-  let lastArgs
-  let lastResult
-  return (...args) => {
-    if (
-      !lastArgs
-      || args.length !== lastArgs.length
-      || args.some((arg, index) => !shallowEqual(lastArgs[index], arg))
-    ) {
-      lastArgs = args
-      lastResult = fn(...args)
-    }
-    return lastResult
-  }
 }

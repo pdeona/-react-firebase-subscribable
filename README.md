@@ -465,7 +465,17 @@ export default connectFirestore(mapSnapshotsToProps)(CurrentUserProfile)
 
 ##### injectedRefs
 
-`...injectedRefs` can be passed into any firestore-connected component, and should have the form { key: string, ref: (Firestore Reference | Function) }. if the provided ref is a function it will be called with the component's props:
+`...injectedRefs` can be passed into any firestore-connected component, and should have the form:
+
+```js
+{
+  key: string,
+  ref: (Firestore Reference | Function),
+  memoizedProps?: string[],
+}
+```
+
+. if the provided `ref` is a function it will be called with the component's props, and if `memoizedProps` is provided the ref will only be updated when the named props change:
 
 ```js
 import React from 'react'
@@ -491,9 +501,21 @@ const mapSnapshotsToProps = ({ userProfile }) => ({
 })
 
 // ref can be a function, will be called with (props) as an arg
-const userProfileRef = ({ user }) => (user
-  ? firebase.firestore().collection('user-profiles').doc(user.uid)
-  : null)
+const injectUserProfileRef = {
+  key: 'userProfile',
+  ref: ({ user }) => (user
+    ? firebase.firestore().collection('user-profiles').doc(user.uid)
+    : null),
+}
+
+// memoizedProps calls ref only when props[name] changes (uses reference equality for data structures)
+const memoizedInjectRef = {
+  key: 'userProfile',
+  ref: ({ user }) => (user
+    ? firebase.firestore().collection('user-profiles').doc(user.uid)
+    : null),
+  memoizedProps: ['user'],
+}
 
 // inject userProfileRef using key 'userProfile'
 const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
@@ -501,87 +523,6 @@ const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userPro
 export default withFirestoreState(CurrentUserProfile)
 ```
 
-
-### Hooks
-
-Note: The hooks API is still unreleased and likely to change. This version should not be used in production.
-
-### useAuthSubscription
-
-useAuthSubscription is a function that accepts a firebase auth instance. the return value (`user` below) will be set upon auth state change.
-
-```js
-import React from 'react'
-import firebase from 'firebase'
-import { useAuthSubscription } from 'react-firebase-subscribable'
-
-const App = () => {
-  const user = useAuthSubscription(firebase.auth())
-  return (
-    <div>
-      {user ? 'Signed in' : 'Signed out'}
-    </div>
-  )
-}
-
-export default App
-```
-
-### useFirestoreSubscription
-
-useFirestoreSubscription is a function that accepts an optional firestore reference. the return value will be updated whenever the data snapshot changes, and the listener subscription will be reinitialized/cleaned up on ref change.
-
-```js
-import React from 'react'
-import firebase from 'firebase'
-import { useFirestoreSubscription } from 'react-firebase-subscribable'
-
-const UserProfile = ({ user }) => {
-  const userRef = user
-    ? firebase.firestore().collection('names').doc(user.uid)
-    : null
-  const userProfile = useFirestoreSubscription(userRef)
-  return (
-    <div>
-      {
-        userProfile ?
-          <span>{userProfile.data().name}</span> :
-          <span>Sign in to view your profile</span>
-      }
-    </div>
-  )
-}
-
-export default UserProfile
-```
-
-### useRTDBSubscription
-
-useRTDBSubscription is a function that accepts an optional real-time database reference and event type (default is `value`). the return value will be updated whenever the data snapshot changes, and the listener subscription will be reinitialized/cleaned up on ref change.
-
-```js
-import React from 'react'
-import firebase from 'firebase'
-import { useRTDBSubscription } from 'react-firebase-subscribable'
-
-const UserProfile = ({ user }) => {
-  const userRef = user
-    ? firebase.database().ref(`names/${user.uid}`)
-    : null
-  const userProfile = useRTDBSubscription(userRef)
-  return (
-    <div>
-      {
-        userProfile ?
-          <span>{userProfile.val().name}</span> :
-          <span>Sign in to view your profile</span>
-      }
-    </div>
-  )
-}
-
-export default UserProfile
-```
 
 ### Examples
 
