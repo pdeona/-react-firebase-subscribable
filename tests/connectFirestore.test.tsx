@@ -83,4 +83,30 @@ describe('connectFirestore tests', () => {
     const node = getByTestId('connected')
     expect(node).toMatchInlineSnapshot(snaps.SNAP_INJECTED_FN)
   })
+
+  test('it updates refs with new props', () => {
+    const Connected = connectFirestore<DummyProps>(
+      ({ mock, mock2 }) => ({ mock: mock && mock.snap, mock2: mock2 && mock2.snap }),
+      {
+        key: 'mock',
+        ref: ({ user }) => user ? (mockRef as any)(user.id) : null,
+      },
+      {
+        key: 'mock2',
+        ref: (mockRef as any)(),
+      },
+    )(Dummy)
+    const { getByTestId, rerender } = render(
+      <Root refMap={createRefMap()}>
+        <Connected user={null} />
+      </Root>
+    )
+    expect(getByTestId('connected')).toMatchInlineSnapshot(snaps.SNAP_NO_USER)
+    rerender(
+      <Root refMap={createRefMap()}>
+        <Connected user={{ id: 1 }} />
+      </Root>
+    )
+    expect(getByTestId('connected')).toMatchInlineSnapshot(snaps.SNAP_INJECTED_FN)
+  })
 })

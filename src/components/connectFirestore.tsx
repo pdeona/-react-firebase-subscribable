@@ -1,8 +1,10 @@
 import React, {
   useState,
   useEffect,
+  useRef,
   ComponentType,
-  forwardRef
+  forwardRef,
+  MutableRefObject,
 } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { useFSCtx } from './FirestoreProvider'
@@ -34,8 +36,8 @@ export default function connectFirestore<P extends object>(mapSnapshotsToProps: 
     function FirestoreConsumer(props: P) {
       const { subscribe, injectRef } = useFSCtx()
       const [snaps, setSnaps] = useState({})
-      let fnRefs: FnRefToInj<P>[] = []
-      let cleanupFn: (rs: RefToInj<P>[]) => void
+      let fnRefs: MutableRefObject<FnRefToInj<P>[]> = useRef([])
+      let cleanupFn: MutableRefObject<(rs: RefToInj<P>[]) => void> = useRef(cleanupRefs(injectRef))
       useEffect(() => {
         const setState = comp2(setSnaps, mapSnapshots)
         return subscribe(setState)
@@ -43,21 +45,20 @@ export default function connectFirestore<P extends object>(mapSnapshotsToProps: 
       // first inject static refs, collect fn refs
       // to be injected in another side-effect
       useEffect(() => {
-        cleanupFn = cleanupRefs(injectRef)
         injectedRefs.forEach((r) => {
-          if (typeof r.ref === 'function') fnRefs = fnRefs.concat(r as FnRefToInj<P>)
+          if (typeof r.ref === 'function') fnRefs.current = fnRefs.current.concat(r as FnRefToInj<P>)
           else injectRef(r as PlainRefToInj)
         })
 
-        return () => cleanupFn(injectedRefs)
+        return () => cleanupFn.current(injectedRefs)
       }, [])
       // this effect re-runs whenever props change, so we will only
       // re-inject refs that rely on props (fn refs)
       useEffect(() => {
-        fnRefs.forEach(({ key, ref }) => {
+        fnRefs.current.forEach(({ key, ref }) => {
           injectRef({ key, ref: ref(props) })
         })
-        return () => cleanupFn(fnRefs)
+        return () => cleanupFn.current(fnRefs.current)
       }, [props])
       return (
         <WrappedComponent {...props} {...snaps} />

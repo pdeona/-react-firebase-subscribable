@@ -27,3 +27,13 @@ export const SNAP_INJECTED_FN = `
   1
 </div>
 `
+
+export const SNAP_NO_USER = `
+<div
+  data-testid="connected"
+>
+  
+  mock value
+  
+</div>
+`

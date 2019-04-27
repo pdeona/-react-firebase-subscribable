@@ -1,12 +1,12 @@
 # 🔥 react-firebase-subscribable 🔥
 
-[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react.svg)](https://www.npmjs.com/package/react-firebase-subscribable)
-
+[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/react-firebase-subscribable.svg)](https://www.npmjs.com/package/react-firebase-subscribable)
 [![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg)](https://circleci.com/gh/pdeona/-react-firebase-subscribable)
-
 [![GitHub issues](https://img.shields.io/github/issues-raw/pdeona/-react-firebase-subscribable.svg)](https://github.com/pdeona/-react-firebase-subscribable)
 
 `react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
+
+### Deprecated: This README is being revised to reflect the API for 2.0.0. Cuurent examples may not work with the `master` branch
 
 ## Table of Contents
 

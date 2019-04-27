@@ -13,15 +13,21 @@ const onChangeAttr = attr => user => ({ target: { value } }) => User
 const onChangeColor = onChangeAttr('favoriteColor')
 const onChangeName = onChangeAttr('name')
 
-function App({ user, userProfile }) {
+const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+
+function App({
+  user, profile, error, ...rest
+}) {
+  console.log(user, user && userProfileRef({ user }).get().then(r => { console.log(r.data()) }), profile, error, rest)
   return (
     <div>
       <div className="profile-info">
         {user
-          ? userProfile
-            ? `${userProfile.name}'s favorite color is ${userProfile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!'
+          ? profile
+            ? `${profile.name ? profile.name.concat('\'s') : 'Your'} favorite color is ${profile.favoriteColor || 'unknown at this time'}` : 'We dont have your profile yet!'
           : 'Sign in to view profile'
         }
+        {error && `There was an error fetching your profile: ${error}`}
       </div>
       {
         user
@@ -51,11 +57,7 @@ function App({ user, userProfile }) {
   )
 }
 
-const mapSnapshotsToProps = ({ userProfile }) => ({
-  userProfile: userProfile ? userProfile.data() : null,
-})
-
-const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
+const mapSnapshotsToProps = state => state
 
 const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
 
@@ -66,6 +68,6 @@ const withAuthState = connectAuth(mapAuthStateToProps)
 export default compose(
   // withAuthState should be the outermost enhancer to ensure withFirestoreState
   // receives `user` as a prop
-  withAuthState,
   withFirestoreState,
+  withAuthState,
 )(App)
