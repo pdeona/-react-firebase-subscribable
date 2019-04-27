@@ -1,0 +1,12 @@
+export const invariant = (assert: boolean, message: string): void => {
+  if (!assert && process.env.NODE_ENV === 'development') {
+    console.error('Error: '.concat(message))
+  }
+}
+
+type Comp2 = <A, B, C>(l: (b: B) => C, r: (a: A) => B) => (a: A) => C
+
+// compose 2 unary functions
+export const comp2: Comp2 = (left, right) => x => left(right(x))
+// curry a binary function
+export const curry2 = <A, B>(fn: (x: A, y: B) => any) => (x: A) => (y: B) => fn(x, y)

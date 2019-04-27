@@ -1,14 +1,37 @@
+import typescript from 'rollup-plugin-typescript2'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import babel from 'rollup-plugin-babel'
-import flow from 'rollup-plugin-flow'
-import { uglify } from 'rollup-plugin-uglify'
+import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
 
 export default [
-  // browser-friendly UMD build
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
+    output: [
+      {
+        file: pkg.main,
+        format: 'cjs',
+      },
+      {
+        file: pkg.module,
+        format: 'es',
+      },
+    ],
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
+    plugins: [
+      typescript({
+        typescript: require('typescript'), // eslint-disable-line
+      }),
+      commonjs(),
+      resolve(),
+      terser(),
+    ],
+  },
+  {
+    input: 'src/index.ts',
     external: ['react', 'hoist-non-react-statics', 'symbol-observable'],
     output: {
       name: 'ReactFirebaseSubscribable',
@@ -21,36 +44,12 @@ export default [
       },
     },
     plugins: [
-      flow(),
-      babel({
-        exclude: 'node_modules/**',
+      typescript({
+        typescript: require('typescript'), // eslint-disable-line
       }),
       commonjs(),
-      resolve({
-        jsnext: true,
-      }),
-      uglify(),
+      resolve(),
+      terser(),
     ]
   },
-
-  // CommonJS (for Node) and ES module (for bundlers) build.
-  // (We could have three entries in the configuration array
-  // instead of two, but it's quicker to generate multiple
-  // builds from a single configuration where possible, using
-  // an array for the `output` option, where we can specify
-  // `file` and `format` for each target)
-  {
-    input: 'src/index.js',
-    external: ['react', 'hoist-non-react-statics', 'symbol-observable'],
-    output: [
-      { file: pkg.main, format: 'cjs' },
-      { file: pkg.module, format: 'es' }
-    ],
-    plugins: [
-      flow(),
-      babel({
-        exclude: 'node_modules/**',
-      }),
-    ]
-  }
 ]
