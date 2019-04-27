@@ -51,5 +51,16 @@ export type ObservableStore = {
 }
 
 export type ForwardedRef<C> = {
-  forwardedRef: Ref<C>,
+  forwardedRef?: Ref<C>,
 }
+
+// annoying fix for typescript not seeing Object.values
+declare global {
+  interface Object {
+    values: <P extends object>(o: P) => Array<P[keyof P]>
+  }
+}
+
+export type Destructured<O>
+  = { [P in keyof O]?: O[P]; }
+  & { rest?: { [P in keyof O]?: O[P] | undefined; } }

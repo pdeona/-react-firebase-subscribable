@@ -6,7 +6,7 @@
 
 `react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
 
-### Deprecated: This README is being revised to reflect the API for 2.0.0. Cuurent examples may not work with the `master` branch
+### Deprecated: This README is being revised to reflect the API for 2.0.0. Current examples may not work with the `master` branch
 
 ## Table of Contents
 

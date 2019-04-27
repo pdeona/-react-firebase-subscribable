@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { render, cleanup } from 'react-testing-library'
-import { mockFirestore } from './helpers'
+import { mockFirestore, connectedNode } from './helpers'
 import { connectFirestore, createRefMap, FirestoreProvider } from '../src' // eslint-disable-line import/no-unresolved
 import * as snaps from './connectFirestore.snaps'
 import { ObservableStore } from '../src/types'
@@ -12,25 +12,26 @@ type DummyProps = {
   [key: string]: any,
 }
 
+function Root({ children, refMap }: RootProps) {
+  return (
+    <FirestoreProvider refMap={refMap}>
+      {children}
+    </FirestoreProvider>
+  )
+}
+
+function Dummy({ mock, mock2, user }: DummyProps) {
+  return (
+    <div data-testid="connected">
+      {mock ? mock.data() : ''}
+      {mock2 ? mock2.data() : ''}
+      {user ? user.id : ''}
+    </div>
+  )
+}
+
 describe('connectFirestore tests', () => {
   afterEach(cleanup)
-  function Root({ children, refMap }: RootProps) {
-    return (
-      <FirestoreProvider refMap={refMap}>
-        {children}
-      </FirestoreProvider>
-    )
-  }
-
-  function Dummy({ mock, mock2, user }: DummyProps) {
-    return (
-      <div data-testid="connected">
-        {mock ? mock.data() : ''}
-        {mock2 ? mock2.data() : ''}
-        {user ? user.id : ''}
-      </div>
-    )
-  }
 
   const mockRef = (docID = 'my-pants') => mockFirestore()
     .collection('pants')
@@ -48,7 +49,7 @@ describe('connectFirestore tests', () => {
         <Connected />
       </Root>
     )
-    const node = getByTestId('connected')
+    const node = connectedNode(getByTestId)
     expect(node).toMatchInlineSnapshot(snaps.SNAP_DEFAULT_REF)
   })
 
@@ -59,7 +60,7 @@ describe('connectFirestore tests', () => {
         <Connected />
       </Root>
     )
-    const node = getByTestId('connected')
+    const node = connectedNode(getByTestId)
     expect(node).toMatchInlineSnapshot(snaps.SNAP_NULL_REF)
   })
 
@@ -80,7 +81,7 @@ describe('connectFirestore tests', () => {
         <Connected user={{ id: 1 }} />
       </Root>
     )
-    const node = getByTestId('connected')
+    const node = connectedNode(getByTestId)
     expect(node).toMatchInlineSnapshot(snaps.SNAP_INJECTED_FN)
   })
 
@@ -101,12 +102,12 @@ describe('connectFirestore tests', () => {
         <Connected user={null} />
       </Root>
     )
-    expect(getByTestId('connected')).toMatchInlineSnapshot(snaps.SNAP_NO_USER)
+    expect(connectedNode(getByTestId)).toMatchInlineSnapshot(snaps.SNAP_NO_USER)
     rerender(
       <Root refMap={createRefMap()}>
         <Connected user={{ id: 1 }} />
       </Root>
     )
-    expect(getByTestId('connected')).toMatchInlineSnapshot(snaps.SNAP_INJECTED_FN)
+    expect(connectedNode(getByTestId)).toMatchInlineSnapshot(snaps.SNAP_INJECTED_FN)
   })
 })
