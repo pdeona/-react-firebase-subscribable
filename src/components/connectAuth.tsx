@@ -1,4 +1,4 @@
-import React, { Ref, ComponentType, forwardRef } from 'react'
+import React, { Ref, ComponentType, forwardRef, useMemo } from 'react'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import { UserInfo } from 'firebase'
 import { useAuth } from './AuthProvider'
@@ -11,10 +11,11 @@ export default function connectAuth<P extends object>(mapAuthStateToProps: MapAu
   return function enhance(WrappedComponent: ComponentType<P>) {
     function AuthConsumer({ forwardedRef, ...rest }: CProps) {
       const user = useAuth()
+      const authProps = useMemo(() => mapAuthStateToProps(user), [user])
       return (
         <WrappedComponent
           {...rest as P}
-          {...mapAuthStateToProps(user)}
+          {...authProps}
           ref={forwardedRef}
         />
       )

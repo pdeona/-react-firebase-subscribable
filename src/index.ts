@@ -8,4 +8,4 @@ export { default as withFirestoreSubscription } from './components/FirestoreSubs
 export { default as withRTDBSubscription } from './components/RTDatabaseSubscribable'
 export { default as useFirestore } from './hooks/useFirestore'
 export { default as useRTDB } from './hooks/useRTDB'
-export { default as useFirebaseAuth } from './hooks/useAuth'
+export { default as useAuth } from './hooks/useAuth'

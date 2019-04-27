@@ -36,8 +36,9 @@ export default function connectFirestore<P extends object>(mapSnapshotsToProps: 
     function FirestoreConsumer(props: P) {
       const { subscribe, injectRef } = useFSCtx()
       const [snaps, setSnaps] = useState({})
-      let fnRefs: MutableRefObject<FnRefToInj<P>[]> = useRef([])
-      let cleanupFn: MutableRefObject<(rs: RefToInj<P>[]) => void> = useRef(cleanupRefs(injectRef))
+      const fnRefs: MutableRefObject<FnRefToInj<P>[]> = useRef([])
+      const cleanupFn: MutableRefObject<(rs: RefToInj<P>[]) => void>
+        = useRef(cleanupRefs(injectRef))
       useEffect(() => {
         const setState = comp2(setSnaps, mapSnapshots)
         return subscribe(setState)
@@ -46,8 +47,9 @@ export default function connectFirestore<P extends object>(mapSnapshotsToProps: 
       // to be injected in another side-effect
       useEffect(() => {
         injectedRefs.forEach((r) => {
-          if (typeof r.ref === 'function') fnRefs.current = fnRefs.current.concat(r as FnRefToInj<P>)
-          else injectRef(r as PlainRefToInj)
+          if (typeof r.ref === 'function') {
+            fnRefs.current = fnRefs.current.concat(r as FnRefToInj<P>)
+          } else injectRef(r as PlainRefToInj)
         })
 
         return () => cleanupFn.current(injectedRefs)
