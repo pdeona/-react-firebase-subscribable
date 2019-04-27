@@ -1,58 +1,76 @@
 // @flow
 import $observable from 'symbol-observable'
-import type {
+import {
   RefMap,
-  ObservableRefMap,
-  SnapshotMap,
+  ObservableStore,
+  FSState,
+  UpdateSnapshot,
+  UpdateError,
   SnapshotListenerMap,
   StateObserver,
-  Observer,
-  Observable,
-  UpdateSnapshotActn,
-  FirestoreSnapshot,
   FirestoreSnapHandler,
-} from 'react-firebase-subscribable'
+  ObserverFn,
+  InjectedRef,
+} from './types'
+import { firestore } from 'firebase'
 
 /**
  * Implement a basic observable ref snapshot store, to allow for dynamic ref
  * injection
  */
+
 export default function createObservableRefMap(
   initialRefs: RefMap = {},
-): ObservableRefMap {
+): ObservableStore {
   let id = 0
   let currentRefs: RefMap = initialRefs
-  let snapshotState: SnapshotMap = {}
+  let snapshotState: FSState = {}
   let stateSubs: StateObserver[] = []
   let snapshotListeners: SnapshotListenerMap = {}
 
-  function dispatch({ key, snap }: UpdateSnapshotActn): void {
-    const newState: SnapshotMap = Object.assign({}, snapshotState, { [key]: snap })
+  // prevents issues where the stateSubscriptions array 
+  // is mutated during dispatch iteration. see redux/create-store.js
+  function ensureStateSubscribers() {
+    return stateSubs.slice(0)
+  }
+
+  function dispatch({ key, ...payload }: UpdateSnapshot | UpdateError): void {
+    const newState: FSState = { ...snapshotState, [key]: payload }
     snapshotState = newState
-    stateSubs.forEach(listener => {
-      listener.observer()
+    const subscribers = ensureStateSubscribers()
+    subscribers.forEach(sub => {
+      sub.observer()
     })
   }
 
   function dispatchSnapshotUpdate(key: string): FirestoreSnapHandler {
-    return function onSnap(snapshot: ?FirestoreSnapshot) {
-      const action: UpdateSnapshotActn = { key, snap: snapshot }
+    return function onSnap(snapshot) {
+      const action: UpdateSnapshot = { key, snap: snapshot }
       dispatch(action)
     }
   }
 
-  function reduceInitialRefs(refs) {
-    return (acc: SnapshotListenerMap, key: string) => {
-      const ref = refs[key]
-      const onSnapshot = dispatchSnapshotUpdate(key)
-      return (ref
-        ? Object.assign(acc, {
-          [key]: ref.onSnapshot(onSnapshot),
-        }) : acc)
+  function dispatchErrorUpdate(key: string): (e: Error) => void {
+    return function onError(error: Error) {
+      const action: UpdateError = { key, error }
+      dispatch(action)
     }
   }
 
-  function unsub(unsubscribe: ?() => void) {
+  function reduceInitialRefs(refs: RefMap) {
+    return (acc: SnapshotListenerMap, key: string) => {
+      const ref = refs[key]
+      const onSnapshot = dispatchSnapshotUpdate(key)
+      const onError = dispatchErrorUpdate(key)
+      return (ref ?
+        {
+          ...acc,
+          [key]: (ref as firestore.CollectionReference).onSnapshot(onSnapshot),
+        } : acc)
+    }
+  }
+
+  function unsub(unsubscribe?: () => void) {
     if (typeof unsubscribe === 'function') {
       unsubscribe()
     }
@@ -65,8 +83,8 @@ export default function createObservableRefMap(
     return snapshotState
   }
 
-  function subscribe(observer) {
-    const subscription: StateObserver = { id: id++, observer } // eslint-disable-line no-plusplus
+  function subscribe(observer: () => void): () => void {
+    const subscription: StateObserver = { id: id++, observer }
     stateSubs = stateSubs.concat(subscription)
     subscription.observer()
     return function unsubscribe() {
@@ -81,18 +99,18 @@ export default function createObservableRefMap(
     }
   }
 
-  function injectRef({ key, ref }) {
+  function injectRef({ key, ref }: InjectedRef) {
     if (!key || typeof key !== 'string') {
       throw new TypeError('injectRef: "key" argument should be a string')
     }
-    if (Reflect.has(currentRefs, key) && currentRefs[key] === ref) {
+    if (key in currentRefs && currentRefs[key] === ref) {
       return
     }
-    currentRefs = Object.assign({}, initialRefs, { [key]: ref })
+    currentRefs = { ...currentRefs, [key]: ref }
     /**
      * the ref has changed, unsubscribe the old listener
      */
-    if (Reflect.has(snapshotListeners, key)) {
+    if (key in snapshotListeners) {
       unsub(snapshotListeners[key])
     }
     /**
@@ -100,22 +118,21 @@ export default function createObservableRefMap(
      * state if the ref is null
      * but we have a snap stored
      */
-    if (Reflect.has(snapshotState, key) && !ref) {
-      const action: UpdateSnapshotActn = { key, snap: null }
-      dispatch(action)
-    }
     if (!ref) {
-      snapshotListeners = Object.assign(
-        {},
-        snapshotListeners,
-        { [key]: null },
-      )
+      snapshotListeners = {
+        ...snapshotListeners,
+        [key]: null,
+      }
+      if (key in snapshotState) {
+        const action: UpdateSnapshot = { key, snap: null }
+        dispatch(action)
+      }
     } else {
-      snapshotListeners = Object.assign(
-        {},
-        snapshotListeners,
-        { [key]: ref.onSnapshot(dispatchSnapshotUpdate(key)) },
-      )
+      snapshotListeners = {
+        ...snapshotListeners,
+        [key]: (ref as firestore.CollectionReference)
+          .onSnapshot(dispatchSnapshotUpdate(key)),
+      }
     }
   }
 
@@ -125,7 +142,7 @@ export default function createObservableRefMap(
   function observable() {
     const subs = subscribe
     return {
-      subscribe(observer: Observer<SnapshotMap>) {
+      subscribe(observer: { next: ObserverFn<FSState> }) {
         if (typeof observer !== 'object' || observer === null) {
           throw new TypeError('Expected the observer to be an object.')
         }
@@ -139,7 +156,7 @@ export default function createObservableRefMap(
         const unsubscribe = subs(observe)
         return { unsubscribe }
       },
-      [$observable](): Observable<SnapshotMap> {
+      [$observable](): ObservableStore {
         return this
       }
     }

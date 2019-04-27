@@ -13,3 +13,4 @@ lib/
 *.config.js
 .circleci/
 *ignore
+.rpt2_cache/

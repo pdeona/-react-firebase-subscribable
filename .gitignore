@@ -4,3 +4,5 @@ coverage/
 yarn-error.log
 flow-typed/npm
 lib/
+yarn.lock
+.rpt2_cache/**

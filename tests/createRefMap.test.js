@@ -4,7 +4,7 @@ import {
   mockCleanup,
   mockSnapshot,
 } from './helpers'
-import { createRefMap } from '../src'
+import { createRefMap } from '../src' // eslint-disable-line import/no-unresolved
 
 describe('createRefMap tests', () => {
   let emitter
@@ -32,6 +32,8 @@ describe('createRefMap tests', () => {
     expect(emitter).toBeCalledWith({})
   })
 
+  const expectedState = { mockRef: { snap: mockSnapshot } }
+
   test('it sends a state update on snapshot', () => {
     const onSnap = jest.fn(cb => {
       cb(mockSnapshot)
@@ -42,7 +44,7 @@ describe('createRefMap tests', () => {
     }
     refMap.injectRef({ key: 'mockRef', ref: thisRef })
     expect(onSnap).toBeCalledTimes(1)
-    expect(emitter).toBeCalledWith({ mockRef: mockSnapshot })
+    expect(emitter).toBeCalledWith(expectedState)
   })
 
   test('it can be initialized with refs', () => {
@@ -50,9 +52,7 @@ describe('createRefMap tests', () => {
       mockRef: ref,
     })
     expect(ref.onSnapshot).toBeCalled()
-    expect(thisRefMap.getState()).toEqual({
-      mockRef: mockSnapshot,
-    })
+    expect(thisRefMap.getState()).toEqual(expectedState)
     const thisEmitter = jest.fn()
     const unsub = thisRefMap.subscribe(subscribe(thisEmitter, thisRefMap))
     expect(thisEmitter).toBeCalledWith(thisRefMap.getState())
@@ -75,7 +75,7 @@ describe('createRefMap tests', () => {
     expect(emitter).toBeCalledWith({})
     refMap.injectRef({ key: 'mockRef', ref })
     expect(ref.onSnapshot).toBeCalled()
-    expect(emitter).toBeCalledWith({ mockRef: mockSnapshot })
+    expect(emitter).toBeCalledWith(expectedState)
   })
 
   test('does nothing if ref exists already on inject', () => {
@@ -86,10 +86,10 @@ describe('createRefMap tests', () => {
     })
     unsubscribe = refMap.subscribe(subscribe(thisEmitter))
     refMap.injectRef({ key: 'mockRef', ref })
-    expect(lastState).toEqual({ mockRef: mockSnapshot })
+    expect(lastState).toEqual(expectedState)
     refMap.injectRef({ key: 'mockRef', ref })
     expect(ref.onSnapshot).toBeCalledTimes(1)
-    expect(lastState).toEqual({ mockRef: mockSnapshot })
+    expect(lastState).toEqual(expectedState)
   })
 
   test(
@@ -116,9 +116,9 @@ describe('createRefMap tests', () => {
   test('it clears state for refs when they are removed', () => {
     refMap.injectRef({ key: 'mockRef', ref })
     expect(ref.onSnapshot).toBeCalled()
-    expect(emitter).toBeCalledWith({ mockRef: mockSnapshot })
+    expect(emitter).toBeCalledWith(expectedState)
     refMap.injectRef({ key: 'mockRef', ref: null })
-    expect(emitter).toBeCalledWith({ mockRef: null })
+    expect(emitter).toBeCalledWith({ mockRef: { snap: null } })
   })
 
   test('it tears down all listeners when last subscriber unsubs', () => {

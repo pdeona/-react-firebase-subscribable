@@ -1,92 +1,62 @@
-import {
-  diffRequiredProps,
-  RequiredPropError,
-} from '../src/shared'
+import { invariant, comp2, curry2 } from '../src/shared'
 
-describe('RequiredPropsError tests', () => {
-  test('it accepts a component name, prop name and message', () => {
-    const e = new RequiredPropError('test', 'prop', 'message')
-    expect(e.message).toEqual('test did not receive prop as a prop. message')
+describe('curry2', () => {
+  const fn = (x, y) => x + y
+  it('takes a binary function and returns a unary function', () => {
+    expect(fn.length).toEqual(2)
+    const curried = curry2(fn)
+    expect(curried.length).toEqual(1)
+  })
+
+  it('allows partial application over binary functions', () => {
+    const curried = curry2(fn)
+    const add1 = curried(1)
+    expect(add1(2)).toEqual(3)
+    expect(add1(3)).toEqual(4)
   })
 })
 
-describe('diffRequiredProps tests', () => {
-  const mockError = jest.fn()
-  let oldConsole
+describe('comp2', () => {
+  const f = str => str.concat('left')
+  const g = str => str.concat('right')
+  it('composes 2 functions f . g so that (f . g) x = f (g x)', () => {
+    const fog = comp2(f, g)
+    expect(fog('p')).toEqual(f(g('p')))
+  })
+})
+
+describe('invariant', () => {
+  const oldErr = console.error
+  let mockErr
+
   beforeAll(() => {
     process.env.NODE_ENV = 'development'
-    oldConsole = console
-    global.console = {
-      error: mockError,
-    }
+  })
+
+  beforeEach(() => {
+    mockErr = jest.fn()
+    console.error = mockErr
   })
 
   afterAll(() => {
-    global.console = oldConsole
     process.env.NODE_ENV = 'test'
+    console.error = oldErr
   })
 
-  const props = {
-    mockPropFn: () => {},
-    mockPropString: 'string',
-    mockPropObject: {},
-    mockPropCustom: {
-      onSnapshot: () => {},
-    },
-  }
-  const componentName = 'TestComponent'
-  const newError = (propName, message = `${propName} is required`) => new RequiredPropError(componentName, propName, message)
-  const testCases = [
-    [[componentName, props], []],
-    [[componentName, props, { propName: 'prop' }], []],
-    [[componentName, props, {
-      propName: 'mockPropFn',
-      propType: 'function',
-    }], []],
-    [[componentName, props, {
-      propName: 'mockPropCustom',
-      predicate: prop => prop.onSnapshot && typeof prop.onSnapshot === 'function',
-      message: 'Custom prop is supposed to have onSnapshot'
-    }], []],
-    [[componentName, props, {
-      propName: 'mockPropCustom',
-      predicate: prop => typeof prop.fakeFunction === 'function',
-      message: 'a message',
-    }], [newError('mockPropCustom', 'a message')]],
-    [[componentName, props, {
-      propName: 'mockPropCustom',
-      predicate: prop => typeof prop.fakeFunction === 'function',
-    }], [newError('mockPropCustom')]],
-    [[componentName, props, {
-      propName: 'mockPropString',
-      propType: 'function',
-    }], [newError(
-      'mockPropString',
-      'mockPropString is required and should be a function',
-    )]],
-    [[componentName, props, {
-      propName: 'mockPropObject',
-      propType: 'object',
-    }], []],
-    [[componentName, props, {
-      propName: 'mockFailedOne',
-      propType: 'object',
-    }, {
-      propName: 'mockFailedTwo',
-      predicate: () => false,
-    }], [
-      newError('mockFailedOne', 'mockFailedOne is required and should be a object'),
-      newError('mockFailedTwo'),
-    ]],
-  ]
-  const runTestCase = ([args, expectedOutput]) => {
-    test(`diffRequiredProps: ${JSON.stringify(args.slice(2))}`, () => {
-      const output = diffRequiredProps(...args)
-      expect(output).toEqual(expectedOutput)
-      expectedOutput.forEach(err => {
-        expect(mockError).toBeCalledWith(err)
-      })
-    })
-  }
-  testCases.forEach(runTestCase)
+  it('checks an assertion', () => {
+    invariant(true, 'will not be logged')
+    expect(mockErr).not.toBeCalled()
+  })
+
+  it('logs in development', () => {
+    const message = 'this will be logged'
+    invariant(false, message)
+    expect(mockErr).toBeCalledWith(`Error: ${message}`)
+  })
+
+  it('doesn\'t log outside of development', () => {
+    process.env.NODE_ENV = 'not-development'
+    invariant(false, 'will never be logged ever')
+    expect(mockErr).not.toBeCalled()
+  })
 })
