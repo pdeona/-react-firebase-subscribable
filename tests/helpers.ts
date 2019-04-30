@@ -3,18 +3,26 @@ import { act } from 'react-testing-library'
 
 const mockCleanup = jest.fn()
 
-const mockSnapshot: any = {
-  data: jest.fn(() => 'mock value'),
-}
-
-const mockDocument: any = jest.fn(path => ({
-  onSnapshot: jest.fn(cb => {
-    cb(mockSnapshot)
-    return mockCleanup
-  }),
-  path,
-  get: jest.fn(() => new Promise(res => res(mockSnapshot))),
+const mockSnapshot: any = jest.fn((data = 'mock value') => ({
+  data: jest.fn(() => data),
 }))
+
+const mockDocument: any = jest.fn(path => {
+  const out = {
+    path,
+    id: path,
+    get: jest.fn(() => new Promise(res => res(mockSnapshot()))),
+    subscriber: null,
+    onSnapshot: null,
+  }
+  out.onSnapshot = jest.fn(cb => {
+    out.subscriber = cb
+    if (cb.next) cb.next(mockSnapshot()) 
+    else cb(mockSnapshot())
+    return mockCleanup
+  })
+  return out
+})
 
 mockSnapshot.ref = mockDocument
 

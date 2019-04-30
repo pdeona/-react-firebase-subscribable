@@ -1,9 +1,7 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "2.0.0-alpha.1",
-  "main": "dist/react-firebase-subscribable.cjs.js",
-  "browser": "dist/react-firebase-subscribable.umd.js",
-  "module": "dist/react-firebase-subscribable.esm.js",
+  "version": "2.0.0",
+  "main": "index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
   "repository": "github:pdeona/-react-firebase-subscribable",
@@ -19,13 +17,14 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "rollup -c",
+    "prebuild": "rimraf dist && yarn build-typedecs",
+    "build": "yarn babel src -o dist/index.js --extensions \".ts,.tsx\"",
     "deploy": "yarn build && yarn publish",
+    "build-typedecs": "yarn tsc -d --outDir dist --emitDeclarationOnly -p ./tsconfig.json",
     "test": "jest --coverage",
     "test:circleci": "jest --ci --reporters=default --reporters=jest-junit --runInBand --json --outputFile=\"reports/jest/results.json\"",
     "test:watch": "jest --watch",
-    "ts:watch": "tsc --watch --noEmit -p ./tsconfig.json"
+    "ts:watch": "yarn tsc --watch --noEmit -p ./tsconfig.json"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",

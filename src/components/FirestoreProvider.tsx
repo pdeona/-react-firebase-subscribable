@@ -2,37 +2,45 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useRef,
   FC,
   ReactNode,
 } from 'react'
-import { ObservableStore, InjectedRef, FSState } from '../types'
+import useRefStore, { StateObservable } from '../hooks/useRefStore'
+import {
+  RefMap,
+  IFSRef,
+  FSState,
+} from '../types'
 
 type FirestoreProviderProps = {
   children: ReactNode,
-  refMap: ObservableStore,
+  initialRefs: RefMap,
 }
 
-type FirestoreProviderState = {
-  subscribe: (o: (s: FSState) => void) => () => void,
-  injectRef: (r: InjectedRef) => void,
+type FirestoreProviderCtx = {
+  store: StateObservable,
+  injectRef: (key: string, r: IFSRef) => () => void,
 }
 
-const FirestoreContext = createContext<FirestoreProviderState>(null)
+const FirestoreContext = createContext<FirestoreProviderCtx>(null)
 
 export const useFSCtx = () => useContext(FirestoreContext)
 
-const FirestoreProvider: FC<FirestoreProviderProps> = ({ children, refMap }) => {
-  const r = useRef(refMap)
-  const { injectRef, subscribe: s, getState } = r.current
-  const subscribe = (callback: (state: FSState) => void) => s(() => {
-    callback(getState())
-  })
+const FirestoreProvider: FC<FirestoreProviderProps> = ({ children, initialRefs }) => {
+  const { store, injectRef } = useRefStore()
   useEffect(() => {
-    r.current = refMap
-  }, [refMap])
+    const subs = Object.keys(initialRefs).map(key => {
+      return injectRef(key, initialRefs[key])
+    })
+    return () => subs.forEach(unsubscribe => {
+      unsubscribe()
+    })
+  }, [initialRefs])
   return (
-    <FirestoreContext.Provider value={{ injectRef, subscribe }}>
+    <FirestoreContext.Provider value={{
+      store,
+      injectRef,
+    }}>
       {children}
     </FirestoreContext.Provider>
   )
