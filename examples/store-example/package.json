@@ -39,7 +39,7 @@
     "react-app-polyfill": "^0.1.3",
     "react-dev-utils": "^6.1.1",
     "react-dom": "^16.8.3",
-    "react-firebase-subscribable": "^2.0.0-alpha.1",
+    "react-firebase-subscribable": "file:../..",
     "resolve": "1.8.1",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.0",

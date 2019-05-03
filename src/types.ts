@@ -1,10 +1,23 @@
 import { UserInfo, database, firestore } from 'firebase'
 import { Ref } from 'react'
+import { Observer } from 'rxjs'
 
-export type AuthState = UserInfo | null
-export type FSSnap = firestore.QuerySnapshot | firestore.DocumentSnapshot
-export type FSRef = firestore.CollectionReference | firestore.DocumentReference
-export type DBRef = database.Reference
+export type AuthState = UserInfo
+export type FSSnap 
+  = firestore.QuerySnapshot
+  | firestore.DocumentSnapshot
+
+export interface IFSRef {
+  onSnapshot<S>(o: Observer<S>): () => void;
+  onSnapshot<S>(next: (s: S) => void, error: (e: Error) => void): () => void;
+  id: string;
+}
+
+export interface IDBRef {
+  on<S>(e: DBEventType, f: (s: S) => void): void;
+  off<S>(e: DBEventType, f: (s: S) => void): void;
+}
+
 export type DBSnap = database.DataSnapshot
 export type DBEventType = 'value'
   | 'child_added'
@@ -13,20 +26,23 @@ export type DBEventType = 'value'
   | 'child_moved'
 
 export type RefMap = {
-  [key: string]: FSRef,
+  [key: string]: IFSRef | (<P>(props: P) => IFSRef),
 }
 
 export type FSState = {
   [key: string]: {
-    snap?: FSSnap,
-    error?: Error,
+    value: FSSnap,
+    error: boolean,
   },
 }
 
 export type ObserverFn<T> = (next: T) => void
 
-export type UpdateSnapshot = { key: string, snap: FSSnap }
+export type UpdateSnapshot = { key: string, snapshot: FSSnap }
 export type UpdateError = { key: string, error: Error }
+export type UpdateAction
+  = UpdateSnapshot
+  | UpdateError
 
 export type SnapshotListenerMap = {
   [key: string]: () => void,
@@ -39,28 +55,15 @@ export type StateObserver = {
 
 export type FirestoreSnapHandler = (s?: FSSnap) => void
 
-export type InjectedRef = {
-  key: string,
-  ref: FSRef,
-}
-
-export type ObservableStore = {
-  getState: () => FSState,
-  subscribe: (o: () => void) => () => void,
-  injectRef: (r: InjectedRef) => void,
-}
+export type MapFirestoreFn = (s: FSState) => any
 
 export type ForwardedRef<C> = {
   forwardedRef?: Ref<C>,
 }
 
-// annoying fix for typescript not seeing Object.values
+// fix for typescript not seeing Object.values
 declare global {
   interface Object {
     values: <P extends object>(o: P) => Array<P[keyof P]>
   }
 }
-
-export type Destructured<O>
-  = { [P in keyof O]?: O[P]; }
-  & { rest?: { [P in keyof O]?: O[P] | undefined; } }

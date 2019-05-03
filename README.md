@@ -4,9 +4,7 @@
 [![CircleCI (all branches)](https://img.shields.io/circleci/project/github/pdeona/-react-firebase-subscribable.svg)](https://circleci.com/gh/pdeona/-react-firebase-subscribable)
 [![GitHub issues](https://img.shields.io/github/issues-raw/pdeona/-react-firebase-subscribable.svg)](https://github.com/pdeona/-react-firebase-subscribable)
 
-`react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions. 
-
-### Deprecated: This README is being revised to reflect the API for 2.0.0. Cuurent examples may not work with the `master` branch
+`react-firebase-subscribable` is a component library for handling Firebase Authentication and Firestore/RTDB subscriptions.
 
 ## Table of Contents
 
@@ -14,18 +12,14 @@
 
 [Usage](#usage)
 
-- [As Decorators](#as-decorators)
-- [withAuthSubscription](#withauthsubscription)
-- [withFirestoreSubscription](#withfirestoresubcription)
-- [withRTDBSubscription](#withrtdbsubscription)
 - [Context API](#context-api):
   - [Auth](#auth)
     - [Firebase Auth Provider](#firebase-auth-provider)
     - [connectAuth](#connectauth)
   - [Firestore](#firestore)
-    - [createRefMap](#createrefmap)
     - [Firestore Provider](#firestore-provider)
     - [connectFirestore](#connectfirestore)
+    - [useInjected](#useinjected)
 
 [Examples](#examples)
 
@@ -56,265 +50,9 @@ Note: you will need load the [dependencies](#dependencies) before this tag to us
 
 ## Usage
 
-### As Decorators
-
-All HOC exports can be used as class decorators:
-
-```js
-@withAuthSubscription
-@withFirestoreSubscription
-@withRTDBSubscription
-@connectAuth(mapAuthStateToProps)
-@connectFirestore(mapSnapshotsToProps, ...injectedRefs)
-```
-
-To enable support in your app, you need to add `@babel/plugin-proposal-decorators` to your project and add the following to your `.babelrc`:
-
-```json
-{
-  "plugins": [
-    ["@babel/plugin-proposal-decorators", { "legacy": true }]
-  ]
-}
-```
-
-See the example in <https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators>
-
-### withAuthSubscription
-
-Props:
-
-| Name               | Type                   | Required |
-| ------------------ |:----------------------:| --------:|
-| firebaseAuth       | Firebase Auth Instance | true     |
-| onAuthStateChanged | function               | true     |
-
-```js
-import React from 'react'
-import { withAuthSubscription } from 'react-firebase-subscribable'
-
-/**
- *  as a decorator
- **/
-@withAuthSubscription
-class CurrentUser extends Component {
-  render() {
-    const { user } = this.props
-    return (
-      <div>
-        {user ? JSON.stringify(user) : 'Not signed in'}
-      </div>
-    )
-  }
-}
-
-export default CurrentUser
-
-/**
- *  as a function
- **/
-const CurrentUser = ({ user }) => (
-  <div>
-    {user ? JSON.stringify(user) : 'Not signed in'}
-  </div>
-)
-
-export default withAuthSubscription(CurrentUser)
-```
-
-```js
-import React, { PureComponent } from 'react'
-import firebase from 'firebase' // firebase auth passed in as prop
-import CurrentUser from './CurrentUser'
-
-export default class App extends PureComponent {
-  state = {
-    user: null,
-  }
-  
-  onAuthStateChanged = user => this.setState(() => ({
-    user,
-  }))
-
-  render() {
-    return (
-      <CurrentUser
-        user={this.state.user}
-        onAuthStateChanged={this.onAuthStateChanged}
-        firebaseAuth={firebase.auth(YOUR_APP_CONFIG)}
-      />
-    )
-  }
-}
-```
-
-### withFirestoreSubscription
-
-withFirestoreSubscription will cleanup/re-initialize snapshot listeners any time firestoreRef changes.
-To use dynamic references simply pass in null when the desired value isn't available:
-`firestoreRef={currentUser ? firebase.firestore().collection('user-profiles').doc(currentUser.id) : null}`
-
-Props:
-
-| Name               | Type                   | Required                                     |
-| ------------------ |:----------------------:| -------------------------------------------: |
-| firestoreRef       | Firestore Reference    | false (if null, no listener is attached)     |
-| onSnapshot         | function               | true                                         |
-
-```js
-import React, { Component } from 'react'
-import { withFirestoreSubscription } from 'react-firebase-subscribable'
-
-/**
- *  as a decorator
- **/
-@withFirestoreSubscription
-class NameInDB extends Component {
-  render() {
-    return (
-      <div>
-        {this.props.name}
-      </div>
-    )
-  }
-}
-
-export default NameInDB
-
-/**
- *  as a function
- **/
-const NameInDB = ({ name }) => (
-  <div>
-    {name}
-  </div>
-)
-
-export default withFirestoreSubscription(NameInDB)
-```
-
-```js
-import React, { PureComponent } from 'react'
-import firebase from 'firebase' // firestore ref passed in as prop
-import NameInDB from './NameInDB'
-
-export default class App extends PureComponent {
-  state = {
-    name: '',
-  }
-  
-  onSnapshot = doc => this.setState(() => ({
-    name: doc.data() || '',
-  }))
-
-  render() {
-    return (
-      <NameInDB
-        name={this.state.name}
-        firestoreRef={firebase.firestore(APP_CONFIG).collection('name').doc('mine')}
-        onSnapshot={this.onSnapshot}
-      />
-    )
-  }
-}
-```
-
-### withRTDBSubscription
-
-withRTDBSubscription will cleanup/re-initialize snapshot listeners any time firebaseRef changes.
-This component also allows an eventType to be provided, for listeners on lists. The default
-value for `eventType` is `"value"`.
-
-To use dynamic references simply pass in null when the desired value isn't available:
-`firebaseRef={currentUser ? firebase.database().ref('user-profiles').child(currentUser.id) : null}`
-
-Props:
-
-| Name               | Type                   | Required                                   |
-| ------------------ |:----------------------:| -----------------------------------------: |
-| firebaseRef        | Firebase DB Reference  | false (if null, no listener is attached)   |
-| onSnapshot         | function               | true                                       |
-| eventType          | enum                   | false; default = 'value'; see [EventTypes](#event-types)   |
-
-#### Event Types
-
-- "value"
-- "child_added"
-- "child_changed"
-- "child_removed"
-- "child_moved"
-
-Note: Firestore is in beta, however it is recommended if you are building a new app to use Firestore over the legacy RTDB. Some of the advantages include:
-
-- Document References
-- A more intuitive and powerful query API
-- More scalability and better performance for apps that handle a large amount of data
-- Less data denormalization required
-
-Read more here: [Real-Time Database vs. Firestore](https://firebase.google.com/docs/database/rtdb-vs-firestore)
-
-```js
-import React, { Component } from 'react'
-import { withRTDBSubscription } from 'react-firebase-subscribable'
-
-/**
- *  as a decorator
- **/
-@withRTDBSubscription
-class NameInDB extends Component {
-  render() {
-    return (
-      <div>
-        {this.props.name}
-      </div>
-    )
-  }
-}
-
-export default NameInDB
-
-/**
- *  as a function
- **/
-const NameInDB = ({ name }) => (
-  <div>
-    {name}
-  </div>
-)
-
-export default withRTDBSubscription(NameInDB)
-```
-
-```js
-import React, { PureComponent } from 'react'
-import firebase from 'firebase' // firebase db ref passed in as prop
-import NameInDB from './NameInDB'
-
-export default class App extends PureComponent {
-  state = {
-    name: '',
-  }
-  
-  onChange = doc => this.setState(() => ({
-    name: doc.val() || '',
-  }))
-
-  render() {
-    return (
-      <NameInDB
-        name={this.state.name}
-        firebaseRef={firebase.database(APP_CONFIG).ref('name').child('mine')}
-        onChange={this.onChange}
-        eventType="value"
-      />
-    )
-  }
-}
-```
-
 ### Context API
 
-`react-firebase-subscribable` exports `Provider` components and `connect` functions for using Auth/Firestore state via the context API. The API is modeled after `redux` with individual components being wrapped in a context consumer and passed the desired state fields. As with the above HOC's, auth state is separated from database subscriptions so the module exports separate Provider/connect functions for each:
+`react-firebase-subscribable` exports `Provider` components and `connect` functions for using Auth/Firestore state via the context API. Auth state is separated from database subscriptions so the module exports separate Provider/connect functions for each:
 
 ### Auth
 
@@ -368,15 +106,18 @@ const AuthConnectedRoot = ({ onAuthStateChanged }) => (
 )
 
 const mapDispatchToProps = dispatch => ({
-  onAuthStateChanged: user => dispatch(onAuthStateChanged(user)),
+  onAuthStateChanged,
 })
 
-export default connect(null, mapDispatchToProps)(AuthConnectedRoot)
+export default connect(
+  null,
+  mapDispatchToProps,
+)(AuthConnectedRoot)
 ```
 
 #### connectAuth
 
-A function that accepts a function `mapAuthStateToProps` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
+A function that accepts a function `mapAuthStateToProps` and returns a function that accepts a component.
 
 ##### mapAuthStateToProps
 
@@ -394,7 +135,7 @@ const CurrentUser = ({ user }) => (
 )
 
 const mapAuthStateToProps = user => ({
-  currentUser: user,
+  user,
 })
 
 export default connectAuth(mapAuthStateToProps)(CurrentUser)
@@ -402,19 +143,19 @@ export default connectAuth(mapAuthStateToProps)(CurrentUser)
 
 ### Firestore
 
-#### createRefMap
-
-A function that returns an observable refmap for the provider to subscribe to. accepts an optional `initialRefMap`, where each key is a string and each value is a ref or null, and returns a `refMap` that can be passed into the Provider.
-
 #### Firestore Provider
 
 Props:
 
-| Name        | Type                                         | Required |
-| ----------- |:--------------------------------------------:| --------:|
-| refMap      | returned from `createRefMap`                 | true     |
+| Name        | Type                            | Required |
+| ----------- |:-------------------------------:| --------:|
+| initialRefs | object (see below.)             | false    |
 
-`refMap` is the return value of calling `createRefMap` with an optional `initialRefMap`
+```ts
+type FirestoreProviderProps = {
+  initialRefs: object<string, firestore.DocumentReference | firestore.CollectionReference | firestore.QueryReference>,
+}
+```
 
 ```js
 // in root component
@@ -423,10 +164,12 @@ import { FirestoreProvider, createRefMap } from 'react-firebase-subscribable'
 import App from 'components/App'
 import firebase from 'firebase'
 
-const refMap = createRefMap()
+const initialRefs = {
+  allUsers: firebase.firestore().collection('all-users'),
+}
 
 const FirestoreConnectedRoot = () => (
-  <FirestoreProvider refMap={refMap}>
+  <FirestoreProvider initialRefs={initial}>
     <App />
   </FirestoreProvider>
 )
@@ -436,14 +179,13 @@ export default FirestoreConnectedRoot
 
 #### connectFirestore
 
-A function that accepts a function `mapSnapshotsToProps` and a list of `injectedRefs` and returns a function that accepts a component. Used similarly to `react-redux`'s `connect`.
+A function that accepts a function `mapSnapshotsToProps` and a list of `injectedRefs` and returns a function that accepts a component.
 
 ##### mapSnapshotsToProps
 
-`mapSnapshotsToProps` will receive the current `refMap`'s corresponding snapshots as values in an object with the same keys:
+`mapSnapshotsToProps` will receive the current `store`'s corresponding snapshots as an argument:
 
 ```js
-// in consumer components
 import React from 'react'
 import { connectFirestore } from 'react-firebase-subscribable'
 
@@ -456,8 +198,9 @@ const CurrentUserProfile = ({ userProfile }) => (
   </div>
 )
 
-const mapSnapshotsToProps = ({ userProfile }) => ({
-  userProfile: userProfile ? userProfile.data() : null,
+const mapSnapshotsToProps = ({ userProfile: { value, error } }) => ({
+  userProfile: !error && value ? value.data() : null,
+  profileError: error ? value : null,
 })
 
 export default connectFirestore(mapSnapshotsToProps)(CurrentUserProfile)
@@ -465,17 +208,16 @@ export default connectFirestore(mapSnapshotsToProps)(CurrentUserProfile)
 
 ##### injectedRefs
 
-`...injectedRefs` can be passed into any firestore-connected component, and should have the form:
+`injectedRefs` can be passed into any firestore-connected component, and should have the form:
 
-```js
+```ts
 {
-  key: string,
-  ref: (Firestore Reference | Function),
-  memoizedProps?: string[],
+  [key: string]: firestore.Reference |
+                 (props) => firestore.Reference | null,
 }
 ```
 
-. if the provided `ref` is a function it will be called with the component's props, and if `memoizedProps` is provided the ref will only be updated when the named props change:
+If the provided `ref` is a function it will be called with the component's props
 
 ```js
 import React from 'react'
@@ -496,51 +238,66 @@ const CurrentUserProfile = ({ userProfile }) => (
  *  component to receive snapshot updates, but still want to inject
  *  refs.
  **/
-const mapSnapshotsToProps = ({ userProfile }) => ({
-  userProfile: userProfile ? userProfile.data() : null,
+const mapSnapshotsToProps = ({
+  userProfile: { value: profileValue, error: profileError },
+  allProfiles: { value: allProfiles, error: allProfilesError },
+}) => ({
+  userProfile: !profileError && profileValue ? profileValue.data() : null,
+  otherProfiles: !allProfilesError && allProfiles.docs,
 })
 
 // ref can be a function, will be called with (props) as an arg
-const injectUserProfileRef = {
-  key: 'userProfile',
-  ref: ({ user }) => (user
+const injectedRefs = {
+  userProfile: ({ user }) => user
     ? firebase.firestore().collection('user-profiles').doc(user.uid)
-    : null),
-}
-
-// memoizedProps calls ref only when props[name] changes (uses reference equality for data structures)
-const memoizedInjectRef = {
-  key: 'userProfile',
-  ref: ({ user }) => (user
-    ? firebase.firestore().collection('user-profiles').doc(user.uid)
-    : null),
-  memoizedProps: ['user'],
+    : null,
+  allProfiles: firebase.firestore().collection('user-profiles'),
 }
 
 // inject userProfileRef using key 'userProfile'
-const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
+const withFirestore = connectFirestore(
+  mapSnapshotsToProps,
+  injectedRefs,
+)
 
-export default withFirestoreState(CurrentUserProfile)
+export default withFirestore(CurrentUserProfile)
 ```
 
+#### useInjected
+
+The `useInjected` hook can be used to manually connect a component to the Firestore Provider, and has the same API as `connectFirestore`:
+
+```js
+import React from 'react'
+import { useInjected } from 'react-firebase-subscribable'
+
+const mapSnapshots = ({ userProfile: { value, error } }) => ({
+  userProfile: !error && value ? value.data() : null,
+  profileError: error ? value : null,
+})
+
+const CurrentUserProfile = ({ user }) => {
+  const { userProfile } = useInjected(mapSnapshots, {
+    userProfile: ({ user }) => user
+      ? firebase.firestore().collection('user-profiles').doc(user.uid)
+      : null,
+    allProfiles: firebase.firestore().collection('user-profiles'),
+  })
+  return (
+  <div>
+    {userProfile
+      ? <div>Welcome back, {userProfile.name}!</div>
+      : <div>Sign in to view profile</div>
+    }
+  </div>
+)
+
+export default CurrentUserProfile
+```
 
 ### Examples
 
-[with Recompose](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-recompose)
-
-[as Decorators](https://github.com/pdeona/-react-firebase-subscribable/tree/master/example-with-decorators)
-
 [Provider/connect example](https://github.com/pdeona/-react-firebase-subscribable/tree/master/store-example)
-
-## Dependencies
-
-- `symbol-observable` `^1.2.0`
-- `hoist-non-react-statics` `^3.1.0`
-
-### Peer Dependencies
-
-- `react` `^16.3.0`
-- `react-dom` `^16.6.0`
 
 ## Bugs, Pull Requests
 
