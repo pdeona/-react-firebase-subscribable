@@ -1,10 +1,23 @@
 import { UserInfo, database, firestore } from 'firebase'
 import { Ref } from 'react'
+import { Observer } from 'rxjs'
 
-export type AuthState = UserInfo | null
-export type FSSnap = firestore.QuerySnapshot | firestore.DocumentSnapshot
-export type FSRef = firestore.CollectionReference | firestore.DocumentReference
-export type DBRef = database.Reference
+export type AuthState = UserInfo
+export type FSSnap 
+  = firestore.QuerySnapshot
+  | firestore.DocumentSnapshot
+
+export type IFSRef = {
+  onSnapshot<S>(o: Observer<S>): () => void;
+  onSnapshot<S>(next: (s: S) => void, error: (e: Error) => void): () => void;
+  id: string;
+}
+
+export type IDBRef = {
+  on<S>(e: DBEventType, f: (s: S) => void): void;
+  off<S>(e: DBEventType, f: (s: S) => void): void;
+}
+
 export type DBSnap = database.DataSnapshot
 export type DBEventType = 'value'
   | 'child_added'
@@ -13,7 +26,7 @@ export type DBEventType = 'value'
   | 'child_moved'
 
 export type RefMap = {
-  [key: string]: FSRef,
+  [key: string]: IFSRef | (<P>(props: P) => IFSRef),
 }
 
 export type FSState = {
@@ -25,8 +38,11 @@ export type FSState = {
 
 export type ObserverFn<T> = (next: T) => void
 
-export type UpdateSnapshot = { key: string, snap: FSSnap }
+export type UpdateSnapshot = { key: string, snapshot: FSSnap }
 export type UpdateError = { key: string, error: Error }
+export type UpdateAction
+  = UpdateSnapshot
+  | UpdateError
 
 export type SnapshotListenerMap = {
   [key: string]: () => void,
@@ -39,9 +55,15 @@ export type StateObserver = {
 
 export type FirestoreSnapHandler = (s?: FSSnap) => void
 
+export type PlainRefToInj = { key: string, ref: IFSRef }
+export type FnRefToInj<P> = { key: string, ref: (p: P) => IFSRef }
+export type RefToInj<P> = PlainRefToInj | FnRefToInj<P>
+
+export type MapFirestoreFn = (s: FSState) => any
+
 export type InjectedRef = {
   key: string,
-  ref: FSRef,
+  ref: IFSRef,
 }
 
 export type ObservableStore = {

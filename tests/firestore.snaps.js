@@ -8,6 +8,15 @@ export const SNAP_DEFAULT_REF = `
 </div>
 `
 
+export const SNAP_DEFAULT_REF_ONE_MOCK = `
+<div
+  data-testid="connected"
+>
+  mock value
+  
+</div>
+`
+
 export const SNAP_NULL_REF = `
 <div
   data-testid="connected"
@@ -34,6 +43,16 @@ export const SNAP_NO_USER = `
 >
   
   mock value
+  
+</div>
+`
+
+export const SNAP_NEXT_VALUE = `
+<div
+  data-testid="connected"
+>
+  next value
+  
   
 </div>
 `

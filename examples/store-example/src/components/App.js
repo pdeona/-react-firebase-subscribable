@@ -18,7 +18,6 @@ const userProfileRef = ({ user }) => (user ? User.userProfile(user.uid) : null)
 function App({
   user, profile, error, ...rest
 }) {
-  console.log(user, user && userProfileRef({ user }).get().then(r => { console.log(r.data()) }), profile, error, rest)
   return (
     <div>
       <div className="profile-info">
@@ -57,9 +56,12 @@ function App({
   )
 }
 
-const mapSnapshotsToProps = state => state
+const mapSnapshotsToProps = ({ profile: { value, error } = {} }) => ({
+  profile: value ? value.data() : null,
+  error: error ? value : null,
+})
 
-const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'userProfile', ref: userProfileRef })
+const withFirestoreState = connectFirestore(mapSnapshotsToProps, { key: 'profile', ref: userProfileRef })
 
 const mapAuthStateToProps = user => ({ user })
 
@@ -68,6 +70,6 @@ const withAuthState = connectAuth(mapAuthStateToProps)
 export default compose(
   // withAuthState should be the outermost enhancer to ensure withFirestoreState
   // receives `user` as a prop
-  withFirestoreState,
   withAuthState,
+  withFirestoreState,
 )(App)

@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
 import { render, cleanup } from 'react-testing-library'
 import { mockFirestore, connectedNode } from './helpers'
-import { connectFirestore, createRefMap, FirestoreProvider } from '../src' // eslint-disable-line import/no-unresolved
-import * as snaps from './connectFirestore.snaps'
-import { ObservableStore } from '../src/types'
+import { connectFirestore, FirestoreProvider } from '../src'
+import * as snaps from './firestore.snaps'
+import { RefMap } from '../src/types'
 
-type RootProps = { children: ReactNode, refMap: ObservableStore }
+type RootProps = { children: ReactNode, refMap?: RefMap }
 type DummyProps = {
   mock: any,
   user: any,
@@ -14,7 +14,7 @@ type DummyProps = {
 
 function Root({ children, refMap }: RootProps) {
   return (
-    <FirestoreProvider refMap={refMap}>
+    <FirestoreProvider initialRefs={refMap}>
       {children}
     </FirestoreProvider>
   )
@@ -23,12 +23,14 @@ function Root({ children, refMap }: RootProps) {
 function Dummy({ mock, mock2, user }: DummyProps) {
   return (
     <div data-testid="connected">
-      {mock ? mock.data() : ''}
-      {mock2 ? mock2.data() : ''}
+      {mock ? mock.value.data() : ''}
+      {mock2 ? mock2.value.data() : ''}
       {user ? user.id : ''}
     </div>
   )
 }
+
+const mapSnaps = s => s
 
 describe('connectFirestore tests', () => {
   afterEach(cleanup)
@@ -39,13 +41,10 @@ describe('connectFirestore tests', () => {
 
   test('it maps snapshots to props', () => {
     const Connected = connectFirestore<DummyProps>(
-      ({ mock, mock2 }) => ({
-        mock: mock && mock.snap,
-        mock2: mock2 && mock2.snap,
-      }),
+      mapSnaps,
     )(Dummy)
     const { getByTestId } = render(
-      <Root refMap={createRefMap({ mock: (mockRef as any)() })}>
+      <Root refMap={{ mock: mockRef('mock') }}>
         <Connected />
       </Root>
     )
@@ -56,7 +55,7 @@ describe('connectFirestore tests', () => {
   test('it accepts null for map snapshots to props', () => {
     const Connected = connectFirestore<DummyProps>(null)(Dummy)
     const { getByTestId } = render(
-      <Root refMap={createRefMap({ mock: (mockRef as any)() })}>
+      <Root refMap={{ mock: mockRef('mock') }}>
         <Connected />
       </Root>
     )
@@ -66,18 +65,14 @@ describe('connectFirestore tests', () => {
 
   test('it injects refs into the store', () => {
     const Connected = connectFirestore<DummyProps>(
-      ({ mock, mock2 }) => ({ mock: mock && mock.snap, mock2: mock2 && mock2.snap }),
+      mapSnaps,
       {
-        key: 'mock',
-        ref: ({ user }) => (mockRef as any)(user.id),
-      },
-      {
-        key: 'mock2',
-        ref: (mockRef as any)(),
-      },
+        mock: () => mockRef('mock'),
+        mock2: mockRef('mock2'),
+      }
     )(Dummy)
-    const { getByTestId } = render(
-      <Root refMap={createRefMap()}>
+    const { getByTestId, rerender } = render(
+      <Root>
         <Connected user={{ id: 1 }} />
       </Root>
     )
@@ -87,24 +82,20 @@ describe('connectFirestore tests', () => {
 
   test('it updates refs with new props', () => {
     const Connected = connectFirestore<DummyProps>(
-      ({ mock, mock2 }) => ({ mock: mock && mock.snap, mock2: mock2 && mock2.snap }),
+      mapSnaps,
       {
-        key: 'mock',
-        ref: ({ user }) => user ? (mockRef as any)(user.id) : null,
-      },
-      {
-        key: 'mock2',
-        ref: (mockRef as any)(),
+        mock: ({ user }: { user?: { id: number }}) => user ? mockRef('mock') : null,
+        mock2: mockRef('mock2'),
       },
     )(Dummy)
     const { getByTestId, rerender } = render(
-      <Root refMap={createRefMap()}>
+      <Root>
         <Connected user={null} />
       </Root>
     )
     expect(connectedNode(getByTestId)).toMatchInlineSnapshot(snaps.SNAP_NO_USER)
     rerender(
-      <Root refMap={createRefMap()}>
+      <Root>
         <Connected user={{ id: 1 }} />
       </Root>
     )
