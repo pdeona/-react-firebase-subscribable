@@ -9,7 +9,10 @@ export type FSSnap
 
 export interface IFSRef {
   onSnapshot<S>(o: Observer<S>): () => void;
-  onSnapshot<S>(next: (s: S) => void, error: (e: Error) => void): () => void;
+  onSnapshot<S>(
+    next: (s: S) => void,
+    error: (e: Error) => void,
+  ): () => void;
   id: string;
 }
 
@@ -25,24 +28,25 @@ export type DBEventType = 'value'
   | 'child_removed'
   | 'child_moved'
 
-export type RefMap = {
-  [key: string]: IFSRef | (<P>(props: P) => IFSRef),
+export type RefMap<P> = {
+  [key: string]: IFSRef | ((props: P) => IFSRef),
 }
 
 export type FSState = {
   [key: string]: {
     value: FSSnap,
-    error: boolean,
+    error: Error,
   },
 }
 
 export type ObserverFn<T> = (next: T) => void
 
-export type UpdateSnapshot = { key: string, snapshot: FSSnap }
-export type UpdateError = { key: string, error: Error }
-export type UpdateAction
-  = UpdateSnapshot
-  | UpdateError
+export interface UpdateAction {
+  key: string,
+  snapshot?: FSSnap,
+  error?: Error,
+}
+
 
 export type SnapshotListenerMap = {
   [key: string]: () => void,

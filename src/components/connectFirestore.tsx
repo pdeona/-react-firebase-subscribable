@@ -1,40 +1,51 @@
 import React, {
   useMemo,
+  useEffect,
+  useState,
   ComponentType,
   forwardRef,
+  Ref,
 } from 'react'
+import { map } from 'rxjs/operators'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import useInjected from '../hooks/useInjected'
+import { useFSCtx } from '../components/FirestoreProvider'
 import {
   MapFirestoreFn,
   RefMap,
   ForwardedRef,
   IFSRef,
 } from '../types'
-import { comp2, getProp } from '../shared'
+import { noop } from '../shared'
 
-export default function connectFirestore<P extends object>(mapSnapshotsToProps: MapFirestoreFn, injectedRefs: RefMap = {}) {
+export default function connectFirestore<P extends object>(mapSnapshotsToProps: MapFirestoreFn, injectedRefs: RefMap<P> = {}) {
   const mapSnapshots = typeof mapSnapshotsToProps === 'function'
     ? mapSnapshotsToProps : () => ({})
+  type CProps = P & ForwardedRef<ComponentType<P>>
   return function enhance(WrappedComponent: ComponentType<P>) {
-    function FirestoreConsumer(props: P & ForwardedRef<ComponentType<P>>) {
-      const refs = useMemo(
-        () => Object.keys(injectedRefs)
-          .map(key => ({
+    function FirestoreConsumer({ forwardedRef, ...rest }: CProps) {
+      const { store, injectRef } = useFSCtx()
+      const [snaps, setSnaps] = useState({})
+      const { staticRefs, fnRefs } = useMemo(() => Object.keys(injectedRefs)
+        .reduce(splitStaticAndFnRefs(injectedRefs), { fnRefs: {}, staticRefs: {} }), [])
+      useEffect(() => {
+        const subs = Object.keys(staticRefs)
+          .map(key => injectRef(key, injectedRefs[key] as IFSRef))
+        return () => subs.forEach(unsubscribe => unsubscribe())
+      }, [])
+      useEffect(() => {
+        const subs = Object.keys(fnRefs).map(key => ({
             key,
-            ref: typeof injectedRefs[key] === 'function'
-              ? (injectedRefs[key] as (p: P) => IFSRef)(props)
-              : injectedRefs[key],
+            ref: (injectedRefs[key] as (p: P) => IFSRef)(rest as P)
           }))
-          .filter(comp2(Boolean, getProp('ref')))
-          .reduce((acc, { key, ref }) => ({
-            ...acc,
-            [key]: ref,
-          }), {}),
-        [props],
-      )
-      const snaps = useInjected(mapSnapshots, refs)
-      const { forwardedRef, ...rest } = props
+          .map(({ key, ref }) => ref ? injectRef(key, ref) : noop)
+        return () => subs.forEach(unsubscribe => unsubscribe())
+      }, [rest])
+      useEffect(() => {
+        const stateSub = store.pipe(
+          map(mapSnapshots),
+        ).subscribe({ next: setSnaps })
+        return () => { stateSub.unsubscribe() }
+      }, [])
 
       return (
         <WrappedComponent
@@ -46,6 +57,37 @@ export default function connectFirestore<P extends object>(mapSnapshotsToProps: 
     }
     const C = hoistNonReactStatics(FirestoreConsumer, WrappedComponent)
 
-    return forwardRef((props: P, ref) => <C forwardedRef={ref} {...props} />)
+    return forwardRef((props: CProps, ref: Ref<ComponentType<P>>) =>
+      <C {...props} forwardedRef={ref} />
+    )
+  }
+}
+
+type StaticAndFnRefs<P> = {
+  staticRefs: {
+    [key: string]: IFSRef,
+  },
+  fnRefs: {
+    [key: string]: (p: P) => IFSRef,
+  },
+}
+
+function splitStaticAndFnRefs<P>(injectedRefs: RefMap<P>) {
+  return function reducer(acc: StaticAndFnRefs<P>, key: keyof RefMap<P>): StaticAndFnRefs<P> {
+    const ref = injectedRefs[key]
+    if (typeof ref === 'function') return {
+      ...acc,
+      fnRefs: {
+        ...acc.fnRefs,
+        [key]: ref,
+      }
+    }
+    return {
+      ...acc,
+      staticRefs: {
+        ...acc.staticRefs,
+        [key]: ref,
+      }
+    }
   }
 }

@@ -5,7 +5,8 @@ import {
   Observer,
   Subject,
 } from 'rxjs'
-import { curry2 } from '../shared'
+import { map } from 'rxjs/operators'
+import { curry2, noop } from '../shared'
 import {
   IFSRef,
   FSSnap,
@@ -41,13 +42,9 @@ function _mkDispatch(state: Observer<UpdateAction>, key: string) {
 const mkDispatch = curry2(_mkDispatch)
 
 export default function useRefStore() {
-  // a map of observables corresponding to ref snapshot events
   const refObservables = useRef(new Map<string, Observable<FSSnap>>())
-  // observable state for multicasting
   const stSource = useRef(new BehaviorSubject<FSState>({}))
-  // observable subject for receiving
-  // dispatches from snapshot observers
-  const updates = useRef(new Subject())
+  const updates = useRef(new Subject<UpdateAction>())
 
   const { addRef, deleteRef } = useMemo(
     () => mkAddDeleteRef(refObservables.current),
@@ -58,16 +55,15 @@ export default function useRefStore() {
     [updates.current]
   )
 
-  // subscribe to dispatched snapshots so state is updated
   useLayoutEffect(() => {
-    const sub = updates.current.subscribe({
-      next: ({ key, ...payload }) => stSource.current.next({
+    const sub = updates.current.pipe(
+      map<UpdateAction, FSState>(({ key, ...payload }) => ({
       ...stSource.current.value,
       [key]: payload.error
-        ? { value: payload.error, error: true }
-        : { value: payload.snapshot, error: false },
-      }),
-    })
+        ? { value: null, error: payload.error }
+        : { value: payload.snapshot, error: null },
+      })),
+    ).subscribe(stSource.current)
     return () => { sub.unsubscribe() }
   }, [])
 

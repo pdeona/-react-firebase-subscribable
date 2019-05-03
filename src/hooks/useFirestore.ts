@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react'
-import {
-  firestore,
-} from 'firebase'
 import { FSSnap, IFSRef } from '../types'
 
 export default function useFirestore(
@@ -11,8 +8,7 @@ export default function useFirestore(
   const [error, onError] = useState<Error>(null)
   useEffect(() => {
     if (firestoreRef) {
-      return (firestoreRef as firestore.CollectionReference)
-        .onSnapshot(onSnap, onError)
+      return firestoreRef.onSnapshot(onSnap, onError)
     }
   }, [firestoreRef])
   return [snapshot, error]

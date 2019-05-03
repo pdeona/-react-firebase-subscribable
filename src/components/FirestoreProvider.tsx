@@ -14,7 +14,7 @@ import {
 
 type FirestoreProviderProps = {
   children: ReactNode,
-  initialRefs: RefMap,
+  initialRefs: RefMap<{}>,
 }
 
 type FirestoreProviderCtx = {

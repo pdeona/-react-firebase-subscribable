@@ -56,3 +56,19 @@ export const SNAP_NEXT_VALUE = `
   
 </div>
 `
+
+export const SNAP_ERR_FALSE = `
+<span
+  data-testid="connected"
+>
+  false
+</span>
+`
+
+export const SNAP_ERR_TRUE = `
+<span
+  data-testid="connected"
+>
+  true
+</span>
+`

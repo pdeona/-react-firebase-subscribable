@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
-import { render, cleanup } from 'react-testing-library'
+import { render, cleanup, act } from 'react-testing-library'
 import { mockFirestore, connectedNode } from './helpers'
 import { connectFirestore, FirestoreProvider } from '../src'
 import * as snaps from './firestore.snaps'
-import { RefMap } from '../src/types'
+import { RefMap, FSState } from '../src/types'
 
-type RootProps = { children: ReactNode, refMap?: RefMap }
+type RootProps = { children: ReactNode, refMap?: RefMap<RootProps> }
 type DummyProps = {
   mock: any,
   user: any,
@@ -52,6 +52,30 @@ describe('connectFirestore tests', () => {
     expect(node).toMatchInlineSnapshot(snaps.SNAP_DEFAULT_REF)
   })
 
+  it('captures errors', () => {
+    const ref = mockRef('errorRef')
+    const mapSnapsToProps = ({ mock: { error } }: FSState) => ({ error })
+    const Connected = connectFirestore<{ error?: boolean }>(
+      mapSnapsToProps,
+      { mock: ref },
+    )(({ error }) => (
+      <span data-testid="connected">
+        {JSON.stringify(!!error)}
+      </span>
+    ))
+    const { getByTestId } = render(
+      <Root>
+        <Connected />
+      </Root>
+    )
+    const node = connectedNode(getByTestId)
+    expect(node).toMatchInlineSnapshot(snaps.SNAP_ERR_FALSE)
+    act(() => {
+      ref.subscriber.error("error")
+    })
+    expect(node).toMatchInlineSnapshot(snaps.SNAP_ERR_TRUE)
+  })
+
   test('it accepts null for map snapshots to props', () => {
     const Connected = connectFirestore<DummyProps>(null)(Dummy)
     const { getByTestId } = render(
@@ -71,7 +95,7 @@ describe('connectFirestore tests', () => {
         mock2: mockRef('mock2'),
       }
     )(Dummy)
-    const { getByTestId, rerender } = render(
+    const { getByTestId } = render(
       <Root>
         <Connected user={{ id: 1 }} />
       </Root>
@@ -84,7 +108,7 @@ describe('connectFirestore tests', () => {
     const Connected = connectFirestore<DummyProps>(
       mapSnaps,
       {
-        mock: ({ user }: { user?: { id: number }}) => user ? mockRef('mock') : null,
+        mock: ({ user }) => user ? mockRef('mock') : null,
         mock2: mockRef('mock2'),
       },
     )(Dummy)

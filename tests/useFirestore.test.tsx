@@ -28,7 +28,7 @@ function Dummy({ user, mockRef, mockRef2 }: DProps) {
   )
 }
 
-describe('connectFirestore tests', () => {
+describe('useFirestore tests', () => {
   afterEach(cleanup)
 
   test('it connects a component to firestore', () => {

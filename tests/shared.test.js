@@ -1,4 +1,9 @@
-import { invariant, comp2, curry2 } from '../src/shared'
+import {
+  comp2,
+  curry2,
+  getProp,
+  invariant,
+} from '../src/shared'
 
 describe('curry2', () => {
   const fn = (x, y) => x + y
@@ -26,37 +31,46 @@ describe('comp2', () => {
 })
 
 describe('invariant', () => {
-  const oldErr = console.error
-  let mockErr
-
   beforeAll(() => {
     process.env.NODE_ENV = 'development'
   })
 
-  beforeEach(() => {
-    mockErr = jest.fn()
-    console.error = mockErr
-  })
-
   afterAll(() => {
     process.env.NODE_ENV = 'test'
-    console.error = oldErr
   })
 
   it('checks an assertion', () => {
-    invariant(true, 'will not be logged')
-    expect(mockErr).not.toBeCalled()
+    expect(() => invariant(true, 'does not throw')).not.toThrowError()
   })
 
-  it('logs in development', () => {
-    const message = 'this will be logged'
-    invariant(false, message)
-    expect(mockErr).toBeCalledWith(`Error: ${message}`)
+  it('throws in development', () => {
+    expect(() => invariant(false, 'throws')).toThrow(TypeError)
   })
 
-  it('doesn\'t log outside of development', () => {
+  it('doesn\'t throw outside of development', () => {
     process.env.NODE_ENV = 'not-development'
-    invariant(false, 'will never be logged ever')
-    expect(mockErr).not.toBeCalled()
+    expect(
+      () => invariant(false, 'will never be logged ever'),
+    ).not.toThrowError()
+  })
+})
+
+describe('getProp', () => {
+  const d = {
+    one: '1',
+    two: null,
+    three: '3',
+  }
+
+  it('curried', () => {
+    expect(getProp.length).toEqual(1)
+    expect(getProp('prop').length).toEqual(1)
+  })
+
+  it('retrieve property', () => {
+    const getOne = getProp('one')
+    const getFour = getProp('four')
+    expect(getOne(d)).toEqual('1')
+    expect(getFour(d)).toBeUndefined()
   })
 })

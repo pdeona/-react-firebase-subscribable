@@ -1,7 +1,7 @@
 {
   "name": "react-firebase-subscribable",
-  "version": "2.0.2",
-  "main": "index.js",
+  "version": "2.0.4",
+  "main": "dist/index.js",
   "author": "Pedro De Ona <pedro@instantmd.co>",
   "license": "MIT",
   "repository": "github:pdeona/-react-firebase-subscribable",
@@ -13,12 +13,13 @@
     "real time",
     "subscriptions"
   ],
+  "sideEffects": false,
   "files": [
     "dist"
   ],
   "scripts": {
     "prebuild": "rimraf dist && yarn build-typedecs",
-    "build": "yarn babel src -o dist/index.js --extensions \".ts,.tsx\"",
+    "build": "yarn babel src -d dist --extensions \".ts,.tsx\"",
     "deploy": "yarn build && yarn publish",
     "build-typedecs": "yarn tsc -d --outDir dist --emitDeclarationOnly -p ./tsconfig.json",
     "test": "jest --coverage",
@@ -29,11 +30,8 @@
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-decorators": "^7.1.6",
     "@babel/plugin-transform-modules-commonjs": "^7.4.4",
     "@babel/preset-env": "^7.1.6",
-    "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
     "@types/hoist-non-react-statics": "^3.3.1",
@@ -51,12 +49,10 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-react": "^1.1.7",
     "eslint-import-resolver-node": "^0.3.2",
-    "eslint-plugin-flowtype": "^3.2.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "firebase": "^5.10.1",
-    "flow-bin": "^0.86.0",
     "jest": "^24.7.1",
     "jest-pnp-resolver": "^1.0.2",
     "react": "^16.8.6",
@@ -64,13 +60,6 @@
     "react-dom": "^16.8.6",
     "react-testing-library": "^7.0.0",
     "rimraf": "^2.6.2",
-    "rollup": "^0.67.3",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-flow": "^1.1.1",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^4.0.4",
-    "rollup-plugin-typescript2": "^0.21.0",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"
   },
