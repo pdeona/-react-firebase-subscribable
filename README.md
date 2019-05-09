@@ -160,7 +160,7 @@ type FirestoreProviderProps = {
 ```js
 // in root component
 import React from 'react'
-import { FirestoreProvider, createRefMap } from 'react-firebase-subscribable'
+import { FirestoreProvider } from 'react-firebase-subscribable'
 import App from 'components/App'
 import firebase from 'firebase'
 
